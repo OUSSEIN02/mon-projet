@@ -1,0 +1,264 @@
+/* =========================================
+   COMMANDES SECTION - STYLES PRÉFIXÉS (cmd-)
+   ========================================= */
+
+   .cmd-section-container {
+    padding: 1.5rem;
+    max-width: 100%;
+    margin: 0 auto;
+    color: #111827;
+  }
+  
+  /* --- En-tête --- */
+  .cmd-section-header {
+    margin-bottom: 1.5rem;
+  }
+  .cmd-section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.25rem 0;
+  }
+  .cmd-section-subtitle {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+  
+  /* --- Barre de filtres (Responsive) --- */
+  .cmd-filters-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .cmd-filters-bar {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+  
+  /* --- Recherche --- */
+  .cmd-search-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .cmd-search-wrapper {
+      width: 24rem; /* 384px */
+    }
+  }
+  .cmd-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+  .cmd-search-input {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+  }
+  .cmd-search-input:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+  }
+  
+  /* --- Groupe de filtres --- */
+  .cmd-filters-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .cmd-filters-group {
+      flex-direction: row;
+      align-items: center;
+      width: auto;
+    }
+  }
+  .cmd-filter-select {
+    flex: 1;
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+  .cmd-filter-select:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+  }
+  .cmd-filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cmd-filter-btn:hover {
+    background-color: #e5e7eb;
+    color: #111827;
+  }
+  
+  /* --- Tableau (Optimisé Mobile) --- */
+  .cmd-table-container {
+    width: 100%;
+    overflow-x: auto; /* Permet le défilement horizontal sur mobile */
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    -webkit-overflow-scrolling: touch; /* Défilement fluide sur iOS */
+  }
+  .cmd-admin-table {
+    width: 100%;
+    min-width: 800px; /* Force le défilement au lieu d'écraser le contenu */
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .cmd-admin-table th {
+    padding: 0.875rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .cmd-admin-table td {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    white-space: nowrap;
+  }
+  .cmd-admin-table tbody tr:hover {
+    background-color: #f9fafb;
+  }
+  .cmd-admin-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .cmd-order-id-cell {
+    font-weight: 600;
+    color: #2563eb;
+  }
+  
+  /* --- Badges de statut --- */
+  .cmd-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .cmd-badge-warning { background-color: #fef3c7; color: #92400e; }
+  .cmd-badge-info { background-color: #dbeafe; color: #1e40af; }
+  .cmd-badge-success { background-color: #d1fae5; color: #065f46; }
+  .cmd-badge-danger { background-color: #fee2e2; color: #991b1b; }
+  .cmd-badge-purple { background-color: #ede9fe; color: #5b21b6; }
+  
+  /* --- Boutons d'action --- */
+  .cmd-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    color: #2563eb;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cmd-action-btn:hover {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+  }
+  
+  /* --- Pagination --- */
+  .cmd-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  @media (min-width: 640px) {
+    .cmd-pagination {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  .cmd-pagination-info {
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-align: center;
+  }
+  .cmd-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cmd-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cmd-page-btn:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+  }
+  .cmd-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .cmd-page-btn.active {
+    background-color: #f97316;
+    border-color: #f97316;
+    color: #ffffff;
+  }
+  .cmd-page-btn.active:hover {
+    background-color: #ea580c;
+  }

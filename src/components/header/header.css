@@ -1,0 +1,311 @@
+/* ============================================
+   HEADER - COMPOSANT RÉUTILISABLE
+   ============================================ */
+
+   .header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .header.scrolled {
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .nav-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  
+  /* Logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo:hover {
+    transform: scale(1.03);
+  }
+  
+  .logo img {
+    height: 70px;
+    width: auto;
+    display: block;
+  }
+  
+  /* Navigation principale */
+  .main-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .main-nav a {
+    position: relative;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    z-index: 1;
+  }
+  
+  .main-nav a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #F26A22 0%, #FF8A50 100%);
+    border-radius: inherit;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+  }
+  
+  .main-nav a:hover::before,
+  .main-nav a.active::before {
+    transform: scaleX(1);
+  }
+  
+  .main-nav a:hover,
+  .main-nav a.active {
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  
+  /* CTA Desktop */
+  .header-cta {
+    margin-left: 20px;
+  }
+  
+  .header-cta .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  
+  /* Bouton mobile dans le menu */
+  .mobile-download-btn {
+    width: 100%;
+    text-align: center;
+    margin-top: 16px;
+  }
+  
+  /* Styles communs des boutons */
+  .btn-orange {
+    background: linear-gradient(135deg, #F26A22 0%, #FF8A50 100%);
+    color: #fff;
+    box-shadow: 0 8px 25px -6px rgba(242, 106, 34, 0.5);
+  }
+  
+  .btn-orange:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px -8px rgba(242, 106, 34, 0.6);
+    color: #fff;
+  }
+  
+  /* Burger menu */
+  .burger {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .burger:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Animation du menu mobile */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ============================================
+     RESPONSIVE HEADER
+     ============================================ */
+  
+  /* Tablette et mobile */
+  @media (max-width: 768px) {
+    .nav-wrap {
+      padding: 0 24px;
+      height: 68px;
+    }
+  
+    .logo img {
+      height: 55px;
+    }
+  
+    /* Cacher le CTA desktop */
+    .header-cta {
+      display: none !important;
+    }
+  
+    /* Afficher le burger */
+    .burger {
+      display: block !important;
+    }
+  
+    /* Menu mobile */
+    .main-nav {
+      display: none;
+      position: absolute;
+      top: 68px;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 20px 24px;
+      gap: 8px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      flex-direction: column;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+  
+    .main-nav.open {
+      display: flex !important;
+      animation: slideDown 0.3s ease forwards;
+    }
+  
+    .main-nav a {
+      width: 100%;
+      text-align: center;
+      padding: 12px 18px;
+      font-size: 15px;
+    }
+  
+    .main-nav a::before {
+      display: none;
+    }
+  
+    .main-nav a:hover,
+    .main-nav a.active {
+      background: linear-gradient(135deg, #F26A22 0%, #FF8A50 100%);
+      color: #fff;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Petit mobile */
+  @media (max-width: 640px) {
+    .nav-wrap {
+      padding: 0 16px;
+      height: 62px;
+    }
+  
+    .logo img {
+      height: 48px;
+    }
+  
+    .main-nav {
+      top: 62px;
+      padding: 16px;
+    }
+  
+    .main-nav a {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+  
+    .mobile-download-btn {
+      margin-top: 12px;
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+  }
+  
+  /* Très petit mobile */
+  @media (max-width: 400px) {
+    .nav-wrap {
+      padding: 0 12px;
+      height: 56px;
+    }
+  
+    .logo img {
+      height: 40px;
+    }
+  
+    .main-nav {
+      top: 56px;
+      padding: 12px;
+    }
+  
+    .main-nav a {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  
+    .burger {
+      font-size: 20px;
+      padding: 6px 10px;
+    }
+  
+    .mobile-download-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+  
+  /* ============================================
+     UTILITAIRES
+     ============================================ */
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  
+  /* Version responsive du container */
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 24px;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .container {
+      padding: 0 16px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .container {
+      padding: 0 12px;
+    }
+  }

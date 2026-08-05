@@ -1,0 +1,279 @@
+/* =========================================
+   LISTE DES LIVREURS - MOBILE FIRST OPTIMIZED
+   ========================================= */
+
+   :root {
+    --ls-primary: #2563eb;
+    --ls-primary-hover: #1d4ed8;
+    --ls-success: #10b981;
+    --ls-success-bg: #d1fae5;
+    --ls-success-text: #065f46;
+    --ls-warning: #f59e0b;
+    --ls-warning-bg: #fef3c7;
+    --ls-warning-text: #92400e;
+    --ls-danger: #ef4444;
+    --ls-danger-bg: #fee2e2;
+    --ls-danger-text: #991b1b;
+    --ls-bg: #f8fafc;
+    --ls-card-bg: #ffffff;
+    --ls-text-main: #0f172a;
+    --ls-text-muted: #64748b;
+    --ls-border: #e2e8f0;
+    --ls-radius: 12px;
+    --ls-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* --- 1. Base & Container --- */
+  .ls-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 1rem;
+   
+    color: var(--ls-text-main);
+    background-color: var(--ls-bg);
+    box-sizing: border-box;
+  }
+  
+  .ls-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    gap: 1rem;
+  }
+  .ls-error-text { color: var(--ls-danger); font-size: 1rem; margin: 0; }
+  
+  /* --- 2. Header --- */
+  .ls-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .ls-title { font-size: 1.5rem; font-weight: 800; margin: 0; line-height: 1.2; }
+  .ls-subtitle { color: var(--ls-text-muted); margin: 0; font-size: 0.9rem; }
+  
+  .ls-header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+  
+  /* --- 3. Boutons (Touch Targets >= 44px) --- */
+  .ls-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    min-height: 44px; /* Standard tactile */
+  }
+  .ls-btn:active { transform: scale(0.97); }
+  .ls-btn-primary { background-color: var(--ls-primary); color: white; }
+  .ls-btn-primary:active { background-color: var(--ls-primary-hover); }
+  .ls-btn-secondary { background-color: white; color: var(--ls-text-main); border: 1px solid var(--ls-border); }
+  .ls-btn-secondary:active { background-color: #f1f5f9; }
+  .ls-w-full { width: 100%; }
+  
+  /* --- 4. Stats Grid --- */
+  .ls-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2x2 sur mobile */
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .ls-stat-card {
+    background: var(--ls-card-bg);
+    padding: 1rem;
+    border-radius: var(--ls-radius);
+    border: 1px solid var(--ls-border);
+    text-align: center;
+  }
+  .ls-stat-value { display: block; font-size: 1.5rem; font-weight: 800; color: var(--ls-text-main); }
+  .ls-stat-label { font-size: 0.75rem; color: var(--ls-text-muted); text-transform: uppercase; font-weight: 600; }
+  
+  .ls-stat-success .ls-stat-value { color: var(--ls-success); }
+  .ls-stat-warning .ls-stat-value { color: var(--ls-warning); }
+  .ls-stat-danger .ls-stat-value { color: var(--ls-danger); }
+  
+  /* --- 5. Filtres --- */
+  .ls-filters-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .ls-search-wrapper { position: relative; width: 100%; }
+  .ls-search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--ls-text-muted); pointer-events: none; }
+  .ls-search-input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.75rem;
+    border: 1px solid var(--ls-border);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    box-sizing: border-box;
+  }
+  .ls-search-input:focus { outline: none; border-color: var(--ls-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+  
+  .ls-filters-group { display: flex; flex-direction: column; gap: 0.75rem; }
+  .ls-select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--ls-border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+  }
+  .ls-filter-btn { display: none; } /* Caché sur mobile, on utilise les selects natifs */
+  
+  /* --- 6. Vue Mobile : Cartes --- */
+  .ls-mobile-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .ls-mobile-card {
+    background: var(--ls-card-bg);
+    border-radius: var(--ls-radius);
+    border: 1px solid var(--ls-border);
+    overflow: hidden;
+    box-shadow: var(--ls-shadow);
+  }
+  .ls-card-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--ls-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .ls-card-profile { display: flex; gap: 0.75rem; align-items: center; }
+  .ls-card-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: #f1f5f9; }
+  .ls-card-name { margin: 0 0 0.35rem 0; font-size: 1rem; font-weight: 700; }
+  .ls-card-actions-top { display: flex; gap: 0.5rem; }
+  .ls-icon-btn {
+    background: none; border: none; padding: 0.5rem; color: var(--ls-text-muted); cursor: pointer; border-radius: 8px;
+  }
+  .ls-icon-btn:active { background-color: #f1f5f9; }
+  
+  .ls-card-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+  .ls-card-row { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--ls-text-muted); }
+  .ls-row-icon { flex-shrink: 0; color: var(--ls-primary); }
+  
+  .ls-card-footer { padding: 1rem; border-top: 1px solid var(--ls-border); background-color: #fafafa; }
+  
+  /* --- 7. Vue Desktop : Tableau (Caché sur mobile) --- */
+  .ls-table-container { display: none; }
+  
+  /* --- 8. États Vides --- */
+  .ls-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--ls-text-muted);
+    background: white;
+    border-radius: var(--ls-radius);
+    border: 1px dashed var(--ls-border);
+  }
+  .ls-empty-icon { margin-bottom: 1rem; opacity: 0.3; }
+  
+  /* --- 9. Badges --- */
+  .ls-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .ls-badge-success { background-color: var(--ls-success-bg); color: var(--ls-success-text); }
+  .ls-badge-warning { background-color: var(--ls-warning-bg); color: var(--ls-warning-text); }
+  .ls-badge-danger { background-color: var(--ls-danger-bg); color: var(--ls-danger-text); }
+  
+  /* =========================================
+     TABLETTE & DESKTOP (Min-width 768px+)
+     ========================================= */
+  
+  @media (min-width: 768px) {
+    .ls-container { padding: 2rem; }
+    .ls-hide-mobile { display: inline; }
+    
+    .ls-header { flex-direction: row; justify-content: space-between; align-items: center; }
+    
+    .ls-stats-grid { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    
+    .ls-filters-bar { flex-direction: row; align-items: center; }
+    .ls-search-wrapper { flex: 1; max-width: 400px; }
+    .ls-filters-group { flex-direction: row; align-items: center; }
+    .ls-select { width: auto; min-width: 160px; }
+    .ls-filter-btn { display: inline-flex; }
+  
+    /* Cacher les cartes, montrer le tableau */
+    .ls-mobile-cards { display: none; }
+    .ls-table-container { display: block; }
+  
+    .ls-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--ls-radius);
+      overflow: hidden;
+      box-shadow: var(--ls-shadow);
+      border: 1px solid var(--ls-border);
+    }
+    .ls-table th {
+      text-align: left;
+      padding: 1rem 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ls-text-muted);
+      background-color: #fafafa;
+      border-bottom: 1px solid var(--ls-border);
+    }
+    .ls-table td {
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--ls-border);
+      vertical-align: middle;
+    }
+    .ls-table tbody tr:hover { background-color: #f8fafc; }
+    .ls-table tbody tr:last-child td { border-bottom: none; }
+    .ls-text-center { text-align: center; }
+    .ls-font-bold { font-weight: 700; }
+  
+    .ls-table-profile { display: flex; align-items: center; gap: 0.75rem; }
+    .ls-table-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .ls-table-name { font-weight: 600; color: var(--ls-text-main); }
+    .ls-table-sub { font-size: 0.8rem; color: var(--ls-text-muted); margin-top: 0.25rem; }
+  
+    .ls-contact-info { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: var(--ls-text-muted); }
+    .ls-contact-info div { display: flex; align-items: center; gap: 0.5rem; }
+    
+    .ls-zone-badge, .ls-vehicle-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
+  
+    .ls-action-buttons { display: flex; justify-content: center; gap: 0.5rem; }
+    .ls-action-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--ls-border);
+      background: white; color: var(--ls-text-muted); cursor: pointer; transition: all 0.2s;
+    }
+    .ls-action-btn:hover { background-color: #f1f5f9; color: var(--ls-primary); border-color: var(--ls-primary); }
+    .ls-action-success:hover { color: var(--ls-success); border-color: var(--ls-success); background-color: var(--ls-success-bg); }
+  
+    .ls-table-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 1.5rem; padding: 0 0.5rem;
+    }
+    .ls-table-info { font-size: 0.9rem; color: var(--ls-text-muted); }
+  }

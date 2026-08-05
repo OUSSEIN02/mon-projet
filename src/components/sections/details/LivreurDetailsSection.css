@@ -1,0 +1,505 @@
+/* =========================================
+   LIVREUR DETAILS - MOBILE FIRST OPTIMIZED
+   ========================================= */
+
+   :root {
+    --ld-primary: #2563eb;
+    --ld-primary-hover: #1d4ed8;
+    --ld-success: #10b981;
+    --ld-success-hover: #059669;
+    --ld-danger: #ef4444;
+    --ld-danger-hover: #dc2626;
+    --ld-warning: #f59e0b;
+    --ld-bg: #f8fafc;
+    --ld-card-bg: #ffffff;
+    --ld-text-main: #0f172a;
+    --ld-text-muted: #64748b;
+    --ld-border: #e2e8f0;
+    --ld-radius: 12px;
+    --ld-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --ld-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* --- 1. Base & Container (Mobile par défaut) --- */
+  .ld-page-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 1rem; /* Petit padding sur mobile */
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--ld-text-main);
+    background-color: var(--ld-bg);
+    box-sizing: border-box;
+  }
+  
+  .ld-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .ld-error-text { color: var(--ld-danger); font-size: 1rem; margin: 0; }
+  
+  /* --- 2. Header --- */
+  .ld-header { margin-bottom: 1.5rem; }
+  
+  .ld-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ld-text-muted);
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    margin-left: -0.5rem; /* Compense le padding pour l'alignement */
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .ld-back-link:active { background-color: #e2e8f0; }
+  
+  .ld-title { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.25rem 0; line-height: 1.2; }
+  .ld-subtitle { color: var(--ld-text-muted); margin: 0; font-size: 0.9rem; }
+  
+  /* --- 3. Alertes --- */
+  .ld-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: var(--ld-radius);
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+  }
+  .ld-alert-warning { background-color: #fffbeb; border-color: #fcd34d; color: #92400e; }
+  .ld-alert-icon { flex-shrink: 0; margin-top: 2px; }
+  .ld-alert strong { display: block; font-size: 1rem; margin-bottom: 0.25rem; }
+  .ld-alert p { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+  
+  /* --- 4. Grille Principale --- */
+  .ld-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 colonne sur mobile */
+    gap: 1rem;
+  }
+  
+  .ld-main-col { display: flex; flex-direction: column; gap: 1rem; }
+  .ld-sidebar-col { display: flex; flex-direction: column; gap: 1rem; }
+  
+  /* --- 5. Cartes --- */
+  .ld-card {
+    background: var(--ld-card-bg);
+    border-radius: var(--ld-radius);
+    box-shadow: var(--ld-shadow);
+    border: 1px solid var(--ld-border);
+    overflow: hidden;
+  }
+  
+  .ld-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--ld-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fafafa;
+  }
+  .ld-card-header h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+  
+  .ld-card-body { padding: 1.25rem; }
+  .ld-card-footer { padding: 1.25rem; border-top: 1px solid var(--ld-border); background-color: #fafafa; }
+  
+  /* --- 6. Badges --- */
+  .ld-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  .ld-badge-success { background-color: #d1fae5; color: #065f46; }
+  .ld-badge-warning { background-color: #fef3c7; color: #92400e; }
+  .ld-badge-danger { background-color: #fee2e2; color: #991b1b; }
+  .ld-badge-default { background-color: #f1f5f9; color: #475569; }
+  
+  /* --- 7. Profil & Infos --- */
+  .ld-profile-header {
+    display: flex;
+    flex-direction: column; /* Vertical sur mobile */
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--ld-border);
+  }
+  
+  .ld-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #eff6ff;
+    color: var(--ld-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ld-profile-info h4 { margin: 0 0 0.5rem 0; font-size: 1.2rem; font-weight: 700; }
+  .ld-id-badge {
+    display: inline-block;
+    background-color: #f1f5f9;
+    color: var(--ld-text-muted);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: monospace;
+  }
+  
+  .ld-info-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 colonne sur mobile */
+    gap: 1.25rem;
+  }
+  
+  .ld-info-item { display: flex; flex-direction: column; gap: 0.35rem; }
+  .ld-label { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; color: var(--ld-text-muted); margin: 0; }
+  .ld-value { font-size: 0.95rem; font-weight: 600; color: var(--ld-text-main); margin: 0; word-break: break-word; }
+  .ld-break-word { word-break: break-all; } /* Pour les longs emails */
+  
+  .ld-plate {
+    font-family: monospace;
+    font-size: 1rem;
+    background-color: #f1f5f9;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+  
+  .ld-text-success { color: var(--ld-success); display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; }
+  .ld-text-danger { color: var(--ld-danger); display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; }
+  .ld-text-muted { color: var(--ld-text-muted); font-size: 0.9rem; }
+  
+  /* --- 8. Images & Documents (Optimisé Tactile) --- */
+  .ld-documents-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Empilé sur mobile */
+    gap: 1.5rem;
+  }
+  
+  .ld-document-item h4, .ld-moto-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ld-text-main);
+  }
+  
+  .ld-image-wrapper {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid var(--ld-border);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    background-color: #f8fafc;
+    /* Hauteur confortable pour le pouce */
+    min-height: 220px; 
+  }
+  
+  .ld-image-wrapper:active { transform: scale(0.98); border-color: var(--ld-primary); }
+  
+  .ld-image-wrapper img {
+    width: 100%;
+    height: 250px; /* Hauteur fixe sur mobile pour l'uniformité */
+    display: block;
+    object-fit: contain; /* IMPORTANT : Ne coupe pas la carte d'identité */
+    background-color: #ffffff;
+  }
+  
+  .ld-image-tall img { height: 300px; }
+  
+  .ld-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    gap: 0.5rem;
+    pointer-events: none; /* Laisse le clic passer au wrapper */
+  }
+  /* Sur mobile, on affiche l'overlay en permanence ou au touch, mais ici on le garde au hover pour desktop */
+  @media (hover: hover) {
+    .ld-image-wrapper:hover .ld-image-overlay { opacity: 1; }
+    .ld-image-wrapper:hover { border-color: var(--ld-primary); }
+  }
+  
+  .ld-download-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    width: 100%; /* Pleine largeur sur mobile pour faciliter le tap */
+    padding: 0.6rem;
+    background-color: #f8fafc;
+    color: var(--ld-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid var(--ld-border);
+    transition: background 0.2s;
+  }
+  .ld-download-btn:active { background-color: #e2e8f0; }
+  
+  .ld-no-image {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    border-radius: 10px;
+    color: var(--ld-text-muted);
+    font-size: 0.9rem;
+    border: 2px dashed var(--ld-border);
+  }
+  
+  /* --- 9. Zones & Stats --- */
+  .ld-zones-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--ld-border);
+  }
+  
+  .ld-zone-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background-color: #eff6ff;
+    color: var(--ld-primary);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #dbeafe;
+  }
+  
+  .ld-stats-row {
+    display: grid;
+    grid-template-columns: 1fr; /* Empilé sur très petits écrans */
+    gap: 0.75rem;
+  }
+  
+  .ld-stat-box {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--ld-border);
+  }
+  
+  .ld-stat-number { display: block; font-size: 1.5rem; font-weight: 800; color: var(--ld-primary); margin-bottom: 0.25rem; }
+  .ld-stat-label { font-size: 0.75rem; color: var(--ld-text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  
+  /* --- 10. Sidebar Résumé --- */
+  .ld-summary-body { padding: 0; }
+  .ld-summary-row {
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .ld-summary-row.ld-border-top { border-top: 1px solid var(--ld-border); }
+  .ld-summary-label { font-size: 0.85rem; color: var(--ld-text-muted); font-weight: 600; }
+  .ld-summary-value { font-size: 0.9rem; font-weight: 700; color: var(--ld-text-main); text-align: right; word-break: break-word; }
+  .ld-summary-badge { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+  
+  .ld-actions-vertical { display: flex; flex-direction: column; gap: 0.75rem; }
+  
+  /* --- 11. Boutons (Touch Targets >= 44px) --- */
+  .ld-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem; /* Hauteur minimale ~44px */
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    min-height: 44px; /* Standard Apple/Google pour le tactile */
+  }
+  
+  .ld-btn:active { transform: scale(0.98); }
+  .ld-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  
+  .ld-btn-primary { background-color: var(--ld-primary); color: white; }
+  .ld-btn-primary:active:not(:disabled) { background-color: var(--ld-primary-hover); }
+  
+  .ld-btn-success { background-color: var(--ld-success); color: white; }
+  .ld-btn-success:active:not(:disabled) { background-color: var(--ld-success-hover); }
+  
+  .ld-btn-danger { background-color: var(--ld-danger); color: white; }
+  .ld-btn-danger:active:not(:disabled) { background-color: var(--ld-danger-hover); }
+  
+  .ld-btn-secondary { background-color: white; color: var(--ld-text-main); border: 1px solid var(--ld-border); }
+  .ld-btn-secondary:active:not(:disabled) { background-color: #f1f5f9; }
+  
+  .ld-actions-row {
+    display: flex;
+    flex-direction: column; /* Empilé sur mobile */
+    gap: 0.75rem;
+  }
+  
+  /* --- 12. Pills (État véhicule) --- */
+  .ld-pill {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .ld-pill-excellent { background-color: #d1fae5; color: #065f46; }
+  .ld-pill-bon { background-color: #dbeafe; color: #1e40af; }
+  .ld-pill-moyen { background-color: #fef3c7; color: #92400e; }
+  .ld-pill-correct { background-color: #fee2e2; color: #991b1b; }
+  
+  /* --- 13. Modales (Optimisées pour petits écrans) --- */
+  .ld-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-end; /* Sheet style sur mobile */
+    justify-content: center;
+    z-index: 9999;
+    padding: 0;
+  }
+  
+  .ld-modal-box {
+    background: white;
+    border-radius: 20px 20px 0 0; /* Arrondi seulement en haut sur mobile */
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh; /* Empêche de dépasser l'écran */
+    overflow-y: auto; /* Permet le scroll interne */
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .ld-modal-header { padding: 1.5rem 1.5rem 0.5rem 1.5rem; text-align: center; }
+  .ld-modal-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem auto;
+  }
+  .ld-icon-success { background-color: #d1fae5; color: var(--ld-success); }
+  .ld-icon-danger { background-color: #fee2e2; color: var(--ld-danger); }
+  .ld-icon-primary { background-color: #dbeafe; color: var(--ld-primary); }
+  
+  .ld-modal-header h3 { margin: 0; font-size: 1.25rem; font-weight: 800; }
+  .ld-modal-body { padding: 1rem 1.5rem 1.5rem 1.5rem; }
+  .ld-modal-body p { margin: 0 0 1.25rem 0; color: var(--ld-text-muted); line-height: 1.5; text-align: center; font-size: 0.95rem; }
+  
+  .ld-modal-details { background-color: #f8fafc; border-radius: 10px; padding: 1rem; }
+  .ld-detail-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.9rem; border-bottom: 1px solid #e2e8f0; }
+  .ld-detail-row:last-child { border-bottom: none; }
+  .ld-detail-row span:first-child { color: var(--ld-text-muted); }
+  .ld-detail-row strong { color: var(--ld-text-main); }
+  
+  .ld-modal-footer {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column; /* Boutons empilés sur mobile */
+    gap: 0.75rem;
+    background-color: #fafafa;
+    border-top: 1px solid var(--ld-border);
+  }
+  
+  /* Formulaires modale */
+  .ld-form-group { margin-bottom: 1rem; }
+  .ld-form-label { display: block; font-size: 0.9rem; font-weight: 700; color: var(--ld-text-main); margin-bottom: 0.5rem; }
+  .ld-form-input, .ld-form-textarea {
+    width: 100%; padding: 0.85rem; /* Plus grand pour le doigt */
+    border: 2px solid var(--ld-border); border-radius: 10px;
+    font-size: 1rem; font-family: inherit; box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .ld-form-input:focus, .ld-form-textarea:focus { outline: none; border-color: var(--ld-primary); }
+  .ld-form-textarea { resize: vertical; min-height: 120px; }
+  
+  /* Modal Image */
+  .ld-modal-image { align-items: center; padding: 1rem; }
+  .ld-modal-image .ld-modal-box { background: transparent; box-shadow: none; max-height: none; border-radius: 0; }
+  .ld-modal-image-content { position: relative; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .ld-modal-image-content img { max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: var(--ld-shadow-lg); object-fit: contain; }
+  .ld-modal-close-top {
+    position: absolute; top: -50px; right: 0; background: rgba(255,255,255,0.2); border: none;
+    color: white; cursor: pointer; padding: 0.5rem; border-radius: 50%;
+  }
+  .ld-modal-close-bottom { width: 100%; margin-top: 0.5rem; }
+  
+  
+  /* =========================================
+     TABLETTE & DESKTOP (Min-width 768px+)
+     ========================================= */
+  
+  @media (min-width: 768px) {
+    .ld-page-container { padding: 2rem; }
+    .ld-title { font-size: 1.75rem; }
+    
+    .ld-grid { grid-template-columns: 1fr 360px; align-items: start; }
+    .ld-main-col { gap: 1.5rem; }
+    
+    .ld-profile-header { flex-direction: row; text-align: left; }
+    
+    .ld-info-grid { grid-template-columns: 1fr 1fr; }
+    .ld-info-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    
+    .ld-documents-grid { grid-template-columns: 1fr 1fr; }
+    .ld-image-wrapper img { height: 280px; }
+    .ld-image-tall img { height: 350px; }
+    
+    .ld-stats-row { grid-template-columns: repeat(3, 1fr); }
+    
+    .ld-actions-row { flex-direction: row; }
+    .ld-actions-row .ld-btn { width: auto; flex: 1; }
+    
+    .ld-modal-backdrop { align-items: center; padding: 1.5rem; }
+    .ld-modal-box { border-radius: 20px; max-height: 90vh; animation: none; }
+    .ld-modal-footer { flex-direction: row; justify-content: flex-end; }
+    .ld-modal-close-bottom { display: none; } /* On garde seulement le X en haut sur desktop */
+  }
+  
+  /* Utilitaires */
+  .ld-w-full-mobile { width: 100%; }
+  @media (min-width: 768px) {
+    .ld-w-full-mobile { width: auto; }
+  }

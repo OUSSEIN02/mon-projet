@@ -1,0 +1,43 @@
+/* --- Conteneur de base --- */
+.od-loader-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+  }
+  
+  /* --- Mode Plein Écran (Overlay) --- */
+  .od-loader-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px); /* Effet de verre dépoli moderne */
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+  }
+  
+  /* --- Mode Inline (dans un conteneur) --- */
+  .od-loader-inline {
+    width: 100%;
+    min-height: 200px;
+    background-color: transparent;
+  }
+  
+  /* --- Texte de chargement --- */
+  .od-loader-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #475569;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  
+  /* --- Variantes de taille --- */
+  .od-loader-size-sm { width: 32px; height: 32px; }
+  .od-loader-size-md { width: 48px; height: 48px; }
+  .od-loader-size-lg { width: 64px; height: 64px; }
