@@ -136,6 +136,11 @@ const DriverSignup = () => {
       });
       
       toast.success(response.data.message || "Inscription soumise avec succès !");
+
+      const currentCount = parseInt(localStorage.getItem('new_couriers_count') || '0', 10);
+      localStorage.setItem('new_couriers_count', (currentCount + 1).toString());
+      
+      window.dispatchEvent(new Event('courierCreated'));
       
       // Réinitialisation et redirection après succès
       setFormData({

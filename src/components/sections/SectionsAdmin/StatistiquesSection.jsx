@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar, ChevronDown, Download, Filter, Users, ShoppingCart, 
   Truck, DollarSign, Star, Clock, Activity, PieChart, Award, 
-  Zap, Target, MapPin, ChevronRight
+  Zap, Target, MapPin, Store, Bike, TrendingUp
 } from 'lucide-react';
 
 import apiClient from '../../../services/apiClient';
@@ -253,7 +253,7 @@ const StatistiquesSection = () => {
         {/* Top Vendeurs */}
         <div className="panel" style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #f1f5f9' }}>
           <div className="panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}>🏆 Top Vendeurs</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}><Store size={20} /> Top Vendeurs</h3>
           </div>
           <div className="perf-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {topVendeurs.length > 0 ? topVendeurs.map((vendeur, idx) => (
@@ -280,7 +280,7 @@ const StatistiquesSection = () => {
         {/* Top Livreurs */}
         <div className="panel" style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #f1f5f9' }}>
           <div className="panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}>🚚 Top Livreurs</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}> <Bike size={20} /> Top Livreurs</h3>
           </div>
           <div className="perf-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {topLivreurs.length > 0 ? topLivreurs.map((livreur, idx) => (

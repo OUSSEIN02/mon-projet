@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
 import {
   ArrowLeft, User, Bike, AlertCircle, MapPin, FileText,
   Shield, CheckCircle, Loader2
@@ -10,9 +10,9 @@ import apiClient from '../../../services/apiClient';
 import '../../css/CreateLivreurSection.css'; 
 
 const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // 1. État initial cohérent
   const [formData, setFormData] = useState({
     nom: '', prenom: '', whatsapp: '', email: '',
     password: '', password_confirmation: '',      
@@ -66,14 +66,14 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
     const newErrors = {};
     if (!formData.nom.trim()) newErrors.nom = 'Le nom est requis';
     if (!formData.prenom.trim()) newErrors.prenom = 'Le prénom est requis';
-    if (!formData.whatsapp.trim()) newErrors.whatsapp = 'Le numéro WhatsApp est requis'; // <-- CHANGÉ
+    if (!formData.whatsapp.trim()) newErrors.whatsapp = 'Le numéro WhatsApp est requis';
     if (!formData.email.trim()) newErrors.email = 'L\'email est requis';
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email invalide';
     
     if (!formData.password) newErrors.password = 'Le mot de passe est requis';
     else if (formData.password.length < 6) newErrors.password = 'Minimum 6 caractères';
     
-    if (formData.password !== formData.password_confirmation) { // <-- CHANGÉ
+    if (formData.password !== formData.password_confirmation) {
       newErrors.password_confirmation = 'Les mots de passe ne correspondent pas';
     }
 
@@ -107,16 +107,15 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
     const data = new FormData();
     data.append('nom', formData.nom);
     data.append('prenom', formData.prenom);
-    data.append('whatsapp', formData.whatsapp); // <-- CHANGÉ
+    data.append('whatsapp', formData.whatsapp);
     data.append('email', formData.email);
     data.append('password', formData.password);
-    data.append('password_confirmation', formData.password_confirmation); // <-- CHANGÉ (Important pour Laravel)
+    data.append('password_confirmation', formData.password_confirmation);
     
     data.append('numero_plaque', `${formData.numeroPlaque}${formData.numeroPlaqueSuffix}`);
     data.append('etat_moto', formData.etatMoto);
     data.append('experience', formData.experience);
     
-    // Ajout des champs admin
     data.append('status', formData.status);
     data.append('disponibilite', formData.disponibilite);
     
@@ -129,16 +128,19 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
     });
   
     try {
-      // Assurez-vous que cette route pointe vers votre méthode registerLivreur
-      const response = await apiClient.post('/livreurs/register', data, { // Ou '/admin/livreurs' selon vos routes
+      const response = await apiClient.post('/livreurs/register', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       toast.success(response.data.message || "Livreur créé avec succès !");
+
+      const currentCount = parseInt(localStorage.getItem('new_couriers_count') || '0', 10);
+      localStorage.setItem('new_couriers_count', (currentCount + 1).toString());
+      
+      window.dispatchEvent(new Event('courierCreated'));
       
       if (onSuccess) onSuccess();
       
-      // Réinitialisation (mettre à jour les noms ici aussi)
       setFormData({
         nom: '', prenom: '', whatsapp: '', email: '',
         password: '', password_confirmation: '',
@@ -157,7 +159,6 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
         const apiErrors = err.response.data.errors;
         const mappedErrors = {};
         
-        // Mapping précis des erreurs Laravel vers React
         if (apiErrors.whatsapp) mappedErrors.whatsapp = apiErrors.whatsapp[0];
         if (apiErrors.email) mappedErrors.email = apiErrors.email[0];
         if (apiErrors.password) mappedErrors.password = apiErrors.password[0];
@@ -210,7 +211,6 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
       animate={{ opacity: 1, y: 0 }}
       className="admin-livreur-container"
     >
-      {/* Header */}
       <div className="form-header">
         <Link to="/dashboard/livreurs" className="back-btn">
           <ArrowLeft size={20} />
@@ -241,11 +241,14 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
               <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} placeholder="Ex: Jean" className={errors.prenom ? 'error' : ''} />
               {errors.prenom && <p className="error-text">{errors.prenom}</p>}
             </div>
+            
+            {/* ✅ CORRECTION 1 : name="whatsapp" et value={formData.whatsapp} */}
             <div className="form-group">
               <label>Téléphone / WhatsApp *</label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="+241 077 00 00 00" className={errors.phone ? 'error' : ''} />
-              {errors.phone && <p className="error-text">{errors.phone}</p>}
+              <input type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} placeholder="+241 077 00 00 00" className={errors.whatsapp ? 'error' : ''} />
+              {errors.whatsapp && <p className="error-text">{errors.whatsapp}</p>}
             </div>
+            
             <div className="form-group">
               <label>Email *</label>
               <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="votre@email.com" className={errors.email ? 'error' : ''} />
@@ -256,10 +259,12 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
               <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Minimum 6 caractères" className={errors.password ? 'error' : ''} />
               {errors.password && <p className="error-text">{errors.password}</p>}
             </div>
+            
+            {/* ✅ CORRECTION 2 : name="password_confirmation" et value={formData.password_confirmation} */}
             <div className="form-group">
               <label>Confirmer le mot de passe *</label>
-              <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Répétez le mot de passe" className={errors.confirmPassword ? 'error' : ''} />
-              {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
+              <input type="password" name="password_confirmation" value={formData.password_confirmation} onChange={handleChange} placeholder="Répétez le mot de passe" className={errors.password_confirmation ? 'error' : ''} />
+              {errors.password_confirmation && <p className="error-text">{errors.password_confirmation}</p>}
             </div>
           </div>
 
@@ -373,10 +378,11 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
           <div className="form-grid">
             <div className="form-group">
               <label>Statut initial du compte</label>
+              {/* ✅ CORRECTION 3 : Valeurs alignées avec le backend Laravel */}
               <select name="status" value={formData.status} onChange={handleChange}>
-                <option value="pending">En attente de validation</option>
-                <option value="active">Actif (Validé immédiatement)</option>
-                <option value="suspended">Suspendu</option>
+                <option value="en_attente">En attente de validation</option>
+                <option value="actif">Actif (Validé immédiatement)</option>
+                <option value="suspendu">Suspendu</option>
               </select>
             </div>
             <div className="form-group">

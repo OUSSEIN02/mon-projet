@@ -2732,5 +2732,48 @@
       gap: 12px;
     }
 
+    /* Badge de notification dans la sidebar */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pousse le badge à droite */
+  padding: 10px 16px;
+  /* ... vos autres styles de lien ... */
+}
+
+.sidebar-link-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-badge {
+  background-color: #ef4444; /* Rouge vif */
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 9999px; /* Forme de pilule/rond */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Petite animation d'apparition du badge */
+@keyframes badge-pop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+/* Optionnel : Changer la couleur du badge quand le lien est actif */
+.sidebar-link.active .sidebar-badge {
+  background-color: #ffffff;
+  color: #ef4444;
+}
+
 
   

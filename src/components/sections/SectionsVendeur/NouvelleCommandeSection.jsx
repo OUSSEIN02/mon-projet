@@ -5,6 +5,7 @@ import { MapPin, Package, Clock, AlertCircle, Save, Camera, X, Loader2 } from 'l
 import toast from 'react-hot-toast';
 import apiClient from '../../../services/apiClient'; 
 import GooglePlacesAutocomplete from './GooglePlacesAutocomplete';
+import MapPickerModal from './MapPickerModal'; // 🆕 Import du nouveau composant
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 Mo en octets
 
@@ -12,6 +13,9 @@ const NouvelleCommandeSection = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  
+  // 🆕 État pour le modal de la carte
+  const [mapModalOpen, setMapModalOpen] = useState({ isOpen: false, type: null });
 
   const [formData, setFormData] = useState({
     pickupName: '', 
@@ -38,29 +42,19 @@ const NouvelleCommandeSection = () => {
     
     if (type === 'file') {
       const file = files[0];
-      
-      // 🚨 VALIDATION DE LA TAILLE DU FICHIER
       if (file && file.size > MAX_FILE_SIZE) {
         toast.error('La photo ne doit pas dépasser 5 Mo.');
-        // Réinitialiser l'input file
         e.target.value = '';
         return;
       }
-
       setFormData(prev => ({ ...prev, [name]: file }));
-      if (file) {
-        setPhotoPreview(URL.createObjectURL(file));
-      } else {
-        setPhotoPreview(null);
-      }
+      if (file) setPhotoPreview(URL.createObjectURL(file));
+      else setPhotoPreview(null);
     } else {
       setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     }
     
-    // Effacer l'erreur du champ quand l'utilisateur modifie la valeur
-    if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handlePickupAddressChange = (value) => {
@@ -93,6 +87,29 @@ const NouvelleCommandeSection = () => {
     }));
   };
 
+  // 🆕 Logique de sélection sur la carte (équivalent à _pickOnMap en Flutter)
+  const handleMapSelection = (location) => {
+    if (mapModalOpen.type === 'pickup') {
+      setFormData(prev => ({
+        ...prev,
+        pickupAddress: location.address,
+        pickupLat: location.lat,
+        pickupLng: location.lng,
+        pickupName: prev.pickupName || location.address.split(',')[0]
+      }));
+      if (formErrors.pickupAddress) setFormErrors(prev => ({ ...prev, pickupAddress: '' }));
+    } else if (mapModalOpen.type === 'dropoff') {
+      setFormData(prev => ({
+        ...prev,
+        dropoffAddress: location.address,
+        dropoffLat: location.lat,
+        dropoffLng: location.lng,
+        dropoffName: prev.dropoffName || location.address.split(',')[0]
+      }));
+      if (formErrors.dropoffAddress) setFormErrors(prev => ({ ...prev, dropoffAddress: '' }));
+    }
+  };
+
   const handleRemovePhoto = () => {
     setFormData(prev => ({ ...prev, packagePhoto: null }));
     setPhotoPreview(null);
@@ -109,7 +126,6 @@ const NouvelleCommandeSection = () => {
     try {
       const data = new FormData();
       
-      // Mapping des données vers le format attendu par Laravel (snake_case)
       data.append('pickup_name', formData.pickupName);
       data.append('pickup_address', formData.pickupAddress);
       data.append('pickup_lat', formData.pickupLat);
@@ -136,27 +152,17 @@ const NouvelleCommandeSection = () => {
       }
 
       const token = localStorage.getItem('access_token');
-      // Envoi à l'API
       const response = await apiClient.post('/orders', data, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
       });
 
       toast.success('Commande créée avec succès !', { id: loadingToast });
-      
-      // Redirection vers la liste des commandes après un court délai
-      setTimeout(() => {
-        navigate('/vendeurs/commandes');
-      }, 1500);
+      setTimeout(() => navigate('/dashboard/commandes'), 1500);
 
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        // Gestion des erreurs de validation Laravel
         const apiErrors = error.response.data.errors;
         const mappedErrors = {};
-        
-        // Traduction des clés Laravel (snake_case) vers React (camelCase) si nécessaire
         const keyMap = {
           'pickup_address': 'pickupAddress',
           'dropoff_address': 'dropoffAddress',
@@ -170,11 +176,8 @@ const NouvelleCommandeSection = () => {
         }
         
         setFormErrors(mappedErrors);
-        
-        // Afficher la première erreur dans un toast
         const firstError = Object.values(apiErrors)[0][0];
         toast.error(firstError, { id: loadingToast });
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         console.error("Erreur serveur:", error);
@@ -199,6 +202,8 @@ const NouvelleCommandeSection = () => {
         <div className="form-card">
           <h4 className="section-title"><MapPin size={18} /> Adresses</h4>
           <div className="form-grid-2">
+            
+            {/* PICKUP */}
             <div className="form-group">
               <label>Lieu de récupération (Expéditeur) <span className="required">*</span></label>
               <input 
@@ -211,12 +216,27 @@ const NouvelleCommandeSection = () => {
               />
               {formErrors.pickupName && <p className="error-text">{formErrors.pickupName}</p>}
               
-              <GooglePlacesAutocomplete
-                value={formData.pickupAddress}
-                onChange={handlePickupAddressChange}
-                onPlaceSelect={handlePickupPlaceSelect}
-                placeholder="Tapez une adresse au Gabon..."
-              />
+              {/* 🆕 Flexbox pour l'autocomplete + bouton carte */}
+              <div className="flex gap-2 items-start mt-2">
+                <div className="flex-grow">
+                  <GooglePlacesAutocomplete
+                    value={formData.pickupAddress}
+                    onChange={handlePickupAddressChange}
+                    onPlaceSelect={handlePickupPlaceSelect}
+                    placeholder="Tapez une adresse au Gabon..."
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMapModalOpen({ isOpen: true, type: 'pickup' })}
+                  className="mt-0.5 px-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-gray-700 shrink-0 transition-colors"
+                  title="Choisir sur la carte"
+                >
+                  <MapPin size={18} className="text-orange-500" />
+                  <span className="hidden sm:inline text-sm">Carte</span>
+                </button>
+              </div>
+              
               {formErrors.pickupAddress && <p className="error-text">{formErrors.pickupAddress}</p>}
               
               {formData.pickupLat && formData.pickupLng && (
@@ -226,6 +246,7 @@ const NouvelleCommandeSection = () => {
               )}
             </div>
 
+            {/* DROPOFF */}
             <div className="form-group">
               <label>Lieu de livraison (Destinataire) <span className="required">*</span></label>
               <input 
@@ -238,12 +259,27 @@ const NouvelleCommandeSection = () => {
               />
               {formErrors.dropoffName && <p className="error-text">{formErrors.dropoffName}</p>}
               
-              <GooglePlacesAutocomplete
-                value={formData.dropoffAddress}
-                onChange={handleDropoffAddressChange}
-                onPlaceSelect={handleDropoffPlaceSelect}
-                placeholder="Tapez une adresse au Gabon..."
-              />
+              {/* 🆕 Flexbox pour l'autocomplete + bouton carte */}
+              <div className="flex gap-2 items-start mt-2">
+                <div className="flex-grow">
+                  <GooglePlacesAutocomplete
+                    value={formData.dropoffAddress}
+                    onChange={handleDropoffAddressChange}
+                    onPlaceSelect={handleDropoffPlaceSelect}
+                    placeholder="Tapez une adresse au Gabon..."
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMapModalOpen({ isOpen: true, type: 'dropoff' })}
+                  className="mt-0.5 px-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 text-gray-700 shrink-0 transition-colors"
+                  title="Choisir sur la carte"
+                >
+                  <MapPin size={18} className="text-orange-500" />
+                  <span className="hidden sm:inline text-sm">Carte</span>
+                </button>
+              </div>
+              
               {formErrors.dropoffAddress && <p className="error-text">{formErrors.dropoffAddress}</p>}
               
               {formData.dropoffLat && formData.dropoffLng && (
@@ -255,6 +291,7 @@ const NouvelleCommandeSection = () => {
           </div>
         </div>
 
+        {/* ... Le reste de votre code (Détails du colis, Créneau, Actions) reste EXACTEMENT identique ... */}
         {/* 2. Détails du colis + Photo */}
         <div className="form-card">
           <h4 className="section-title"><Package size={18} /> Détails du colis</h4>
@@ -265,14 +302,7 @@ const NouvelleCommandeSection = () => {
             </div>
             <div className="form-group">
               <label>Valeur déclarée (FCFA)</label>
-              <input 
-                type="number" 
-                name="declaredValue" 
-                placeholder="Optionnel" 
-                value={formData.declaredValue} 
-                onChange={handleInputChange} 
-                className={formErrors.declaredValue ? 'input-error' : ''}
-              />
+              <input type="number" name="declaredValue" placeholder="Optionnel" value={formData.declaredValue} onChange={handleInputChange} className={formErrors.declaredValue ? 'input-error' : ''} />
               {formErrors.declaredValue && <p className="error-text">{formErrors.declaredValue}</p>}
             </div>
             <div className="form-group checkbox-group-vertical">
@@ -288,21 +318,12 @@ const NouvelleCommandeSection = () => {
           <div className="form-group" style={{ marginTop: '24px' }}>
             <label>Photo du colis <span className="required">*</span></label>
             <div className="file-upload-wrapper">
-              <input 
-                type="file" 
-                name="packagePhoto" 
-                accept="image/jpeg, image/png, image/jpg" 
-                onChange={handleInputChange} 
-                className="file-input" 
-                id="packagePhoto" 
-              />
+              <input type="file" name="packagePhoto" accept="image/jpeg, image/png, image/jpg" onChange={handleInputChange} className="file-input" id="packagePhoto" />
               <label htmlFor="packagePhoto" className={`file-upload-label ${formErrors.packagePhoto ? 'border-red-500 bg-red-50' : ''}`}>
                 <Camera size={20} />
                 <span>{formData.packagePhoto ? formData.packagePhoto.name : 'Importer une photo du colis'}</span>
               </label>
-              
               {formErrors.packagePhoto && <p className="error-text">{formErrors.packagePhoto}</p>}
-              
               {photoPreview && (
                 <div className="image-preview-container" style={{ marginTop: '16px', position: 'relative', display: 'inline-block' }}>
                   <img src={photoPreview} alt="Aperçu" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px', border: '1px solid #e2e8f0', objectFit: 'cover' }} />
@@ -312,9 +333,7 @@ const NouvelleCommandeSection = () => {
                 </div>
               )}
             </div>
-            <p className="help-text" style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>
-              Formats acceptés : JPG, PNG. Taille maximale : 5 Mo.
-            </p>
+            <p className="help-text" style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>Formats acceptés : JPG, PNG. Taille maximale : 5 Mo.</p>
           </div>
         </div>
 
@@ -337,26 +356,13 @@ const NouvelleCommandeSection = () => {
           {formData.deliveryType === 'programme' && (
             <div className="form-group mt-2">
               <label>Date et heure souhaitées <span className="required">*</span></label>
-              <input 
-                type="datetime-local" 
-                name="scheduledDate" 
-                value={formData.scheduledDate} 
-                onChange={handleInputChange} 
-                className={formErrors.scheduledDate ? 'input-error' : ''}
-              />
+              <input type="datetime-local" name="scheduledDate" value={formData.scheduledDate} onChange={handleInputChange} className={formErrors.scheduledDate ? 'input-error' : ''} />
               {formErrors.scheduledDate && <p className="error-text">{formErrors.scheduledDate}</p>}
             </div>
           )}
           <div className="form-group mt-2">
             <label>Instructions spécifiques</label>
-            <textarea 
-              name="instructions" 
-              rows="3" 
-              placeholder="Code d'entrée, étage, contact client..." 
-              value={formData.instructions} 
-              onChange={handleInputChange}
-              className={formErrors.instructions ? 'input-error' : ''}
-            ></textarea>
+            <textarea name="instructions" rows="3" placeholder="Code d'entrée, étage, contact client..." value={formData.instructions} onChange={handleInputChange} className={formErrors.instructions ? 'input-error' : ''}></textarea>
             {formErrors.instructions && <p className="error-text">{formErrors.instructions}</p>}
           </div>
         </div>
@@ -364,18 +370,19 @@ const NouvelleCommandeSection = () => {
         {/* Actions */}
         <div className="form-actions-footer">
           <button type="submit" className="btn-primary" disabled={isLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', minWidth: '200px' }}>
-            {isLoading ? (
-              <>
-                <Loader2 size={18} className="animate-spin" /> Traitement...
-              </>
-            ) : (
-              <>
-                <Save size={18} /> Créer la commande
-              </>
-            )}
+            {isLoading ? (<><Loader2 size={18} className="animate-spin" /> Traitement...</>) : (<><Save size={18} /> Créer la commande</>)}
           </button>
         </div>
       </form>
+
+      {/* 🆕 Le Modal de la Carte */}
+      <MapPickerModal
+        isOpen={mapModalOpen.isOpen}
+        onClose={() => setMapModalOpen({ isOpen: false, type: null })}
+        onSelect={handleMapSelection}
+        initialLat={mapModalOpen.type === 'pickup' ? formData.pickupLat : formData.dropoffLat}
+        initialLng={mapModalOpen.type === 'pickup' ? formData.pickupLng : formData.dropoffLng}
+      />
     </motion.div>
   );
 };
