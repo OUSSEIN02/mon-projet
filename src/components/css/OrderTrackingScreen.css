@@ -1,0 +1,918 @@
+/* ═══════════════════════════════════════════════════════════
+   ORDER TRACKING SCREEN
+   Préfixe : ot-
+   ═══════════════════════════════════════════════════════════ */
+
+   :root {
+    --ot-orange: #f97316;
+    --ot-orange-dark: #ea580c;
+    --ot-orange-light: rgba(249, 115, 22, 0.1);
+    --ot-orange-border: rgba(249, 115, 22, 0.3);
+    --ot-green: #22c55e;
+    --ot-green-light: rgba(34, 197, 94, 0.1);
+    --ot-green-border: rgba(34, 197, 94, 0.3);
+    --ot-red: #ef4444;
+    --ot-red-light: rgba(239, 68, 68, 0.1);
+    --ot-amber: #f59e0b;
+    --ot-blue: #2563eb;
+    --ot-black: #0f172a;
+    --ot-gray-900: #111827;
+    --ot-gray-700: #374151;
+    --ot-gray-600: #4b5563;
+    --ot-gray-500: #6b7280;
+    --ot-gray-400: #9ca3af;
+    --ot-gray-300: #d1d5db;
+    --ot-gray-200: #e5e7eb;
+    --ot-gray-100: #f3f4f6;
+    --ot-gray-50: #f9fafb;
+    --ot-white: #ffffff;
+    --ot-bg: #f7f7fa;
+    
+    --ot-radius-sm: 8px;
+    --ot-radius-md: 12px;
+    --ot-radius-lg: 16px;
+    --ot-radius-xl: 20px;
+    --ot-radius-full: 50%;
+    
+    --ot-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --ot-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --ot-shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --ot-shadow-orange: 0 8px 18px rgba(249, 115, 22, 0.3);
+    
+    --ot-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     PAGE LAYOUT
+     ─────────────────────────────────────────────────────────── */
+  .ot-page {
+    max-width: 640px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--ot-white);
+   
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 100px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     HEADER
+     ─────────────────────────────────────────────────────────── */
+  .ot-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--ot-white);
+    border-bottom: 1px solid var(--ot-gray-100);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .ot-back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ot-white);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--ot-shadow-md);
+    color: var(--ot-gray-700);
+    cursor: pointer;
+    transition: var(--ot-transition);
+    flex-shrink: 0;
+  }
+  
+  .ot-back-btn:hover {
+    background: var(--ot-gray-50);
+    transform: translateX(-2px);
+  }
+  
+  .ot-header-text {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .ot-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ot-black);
+  }
+  
+  .ot-subtitle {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: var(--ot-gray-500);
+  }
+  
+  .ot-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  
+  .ot-status-badge.ongoing {
+    background: var(--ot-orange-light);
+    border: 1px solid var(--ot-orange-border);
+    color: var(--ot-orange);
+  }
+  
+  .ot-status-badge.completed {
+    background: var(--ot-green-light);
+    border: 1px solid var(--ot-green-border);
+    color: var(--ot-green);
+  }
+  
+  .ot-status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--ot-orange);
+    border-radius: 50%;
+    animation: ot-pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes ot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     CARTE
+     ─────────────────────────────────────────────────────────── */
+  .ot-map-container {
+    height: 250px;
+    margin: 16px;
+    border-radius: var(--ot-radius-lg);
+    border: 1px solid var(--ot-gray-200);
+    overflow: hidden;
+    position: relative;
+    background: var(--ot-gray-100);
+  }
+  
+  .ot-map-error,
+  .ot-map-loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--ot-gray-500);
+  }
+  
+  .ot-map-error {
+    color: var(--ot-red);
+  }
+  
+  .ot-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--ot-gray-200);
+    border-top-color: var(--ot-orange);
+    border-radius: 50%;
+    animation: ot-spin 0.8s linear infinite;
+  }
+  
+  @keyframes ot-spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     CONTENU DÉFILANT
+     ─────────────────────────────────────────────────────────── */
+  .ot-content {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     CARD LIVREUR
+     ─────────────────────────────────────────────────────────── */
+  .ot-livreur-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--ot-white);
+    border-radius: var(--ot-radius-lg);
+    box-shadow: var(--ot-shadow-md);
+    border: 1px solid var(--ot-gray-200);
+  }
+  
+  .ot-livreur-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .ot-livreur-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--ot-radius-full);
+    object-fit: cover;
+  }
+  
+  .ot-online-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    background: var(--ot-green);
+    border: 2.5px solid var(--ot-white);
+    border-radius: var(--ot-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .ot-livreur-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .ot-livreur-name {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ot-black);
+  }
+  
+  .ot-livreur-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .ot-vehicle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--ot-orange-light);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ot-orange);
+  }
+  
+  .ot-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ot-black);
+  }
+  
+  .ot-star-icon {
+    color: var(--ot-amber);
+  }
+  
+  .ot-livreur-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  
+  .ot-action-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--ot-radius-md);
+    cursor: pointer;
+    transition: var(--ot-transition);
+  }
+  
+  .ot-action-green {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--ot-green);
+  }
+  
+  .ot-action-green:hover {
+    background: rgba(34, 197, 94, 0.2);
+  }
+  
+  .ot-action-orange {
+    background: var(--ot-orange-light);
+    color: var(--ot-orange);
+  }
+  
+  .ot-action-orange:hover {
+    background: var(--ot-orange-border);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     CARD ETA
+     ─────────────────────────────────────────────────────────── */
+  .ot-eta-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, var(--ot-orange) 0%, var(--ot-orange-dark) 100%);
+    border-radius: var(--ot-radius-lg);
+    box-shadow: var(--ot-shadow-orange);
+    color: white;
+  }
+  
+  .ot-eta-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .ot-eta-icon {
+    color: white;
+  }
+  
+  .ot-eta-value {
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .ot-eta-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .ot-eta-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     TITRE DE CARTE (commun)
+     ─────────────────────────────────────────────────────────── */
+  .ot-card-title {
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ot-black);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     TIMELINE
+     ─────────────────────────────────────────────────────────── */
+  .ot-timeline-card {
+    padding: 18px;
+    background: var(--ot-white);
+    border-radius: var(--ot-radius-lg);
+    border: 1px solid var(--ot-gray-200);
+  }
+  
+  .ot-timeline {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .ot-timeline-step {
+    display: flex;
+    gap: 12px;
+    position: relative;
+  }
+  
+  .ot-timeline-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 40px;
+  }
+  
+  .ot-timeline-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ot-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--ot-transition);
+  }
+  
+  .ot-timeline-circle.completed {
+    background: var(--ot-green);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+  }
+  
+  .ot-timeline-circle.current {
+    background: var(--ot-orange);
+    box-shadow: 0 0 0 4px var(--ot-orange-light), 0 2px 8px rgba(249, 115, 22, 0.3);
+    animation: ot-current-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes ot-current-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 4px var(--ot-orange-light), 0 2px 8px rgba(249, 115, 22, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(249, 115, 22, 0.15), 0 2px 8px rgba(249, 115, 22, 0.3);
+    }
+  }
+  
+  .ot-timeline-circle.pending {
+    background: var(--ot-gray-300);
+  }
+  
+  .ot-timeline-dot {
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: var(--ot-radius-full);
+  }
+  
+  .ot-timeline-line {
+    width: 2px;
+    flex: 1;
+    min-height: 20px;
+    margin: 4px 0;
+    background: var(--ot-gray-300);
+    border-radius: 2px;
+  }
+  
+  .ot-timeline-line.completed {
+    background: var(--ot-green);
+  }
+  
+  .ot-timeline-content {
+    flex: 1;
+    padding-bottom: 16px;
+    min-width: 0;
+  }
+  
+  .ot-timeline-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  
+  .ot-timeline-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ot-gray-400);
+    flex: 1;
+    line-height: 1.3;
+  }
+  
+  .ot-timeline-title.active {
+    color: var(--ot-black);
+    font-weight: 700;
+  }
+  
+  .ot-timeline-time {
+    font-size: 11px;
+    color: var(--ot-gray-500);
+    flex-shrink: 0;
+  }
+  
+  .ot-timeline-subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ot-gray-500);
+    line-height: 1.4;
+  }
+  
+  .ot-timeline-subtitle.current {
+    color: var(--ot-orange);
+    font-weight: 500;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     CARD DÉTAILS
+     ─────────────────────────────────────────────────────────── */
+  .ot-summary-card {
+    padding: 18px;
+    background: var(--ot-gray-50);
+    border-radius: var(--ot-radius-lg);
+    border: 1px solid var(--ot-gray-200);
+  }
+  
+  .ot-detail-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .ot-detail-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  .ot-detail-icon {
+    color: var(--ot-gray-500);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  .ot-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .ot-detail-label {
+    font-size: 11px;
+    color: var(--ot-gray-500);
+  }
+  
+  .ot-detail-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ot-black);
+    line-height: 1.4;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     BOUTONS D'ACTION EN BAS
+     ─────────────────────────────────────────────────────────── */
+  .ot-bottom-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--ot-white);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     BOUTONS (communs)
+     ─────────────────────────────────────────────────────────── */
+  .ot-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--ot-radius-md);
+    cursor: pointer;
+    transition: var(--ot-transition);
+    border: 1.5px solid transparent;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  
+  .ot-btn-cancel {
+    flex: 1;
+    background: var(--ot-red-light);
+    color: var(--ot-red);
+    border-color: var(--ot-red);
+  }
+  
+  .ot-btn-cancel:hover {
+    background: var(--ot-red);
+    color: white;
+  }
+  
+  .ot-btn-primary {
+    flex: 2;
+    background: var(--ot-orange);
+    color: white;
+    box-shadow: var(--ot-shadow-orange);
+  }
+  
+  .ot-btn-primary:hover {
+    background: var(--ot-orange-dark);
+    transform: translateY(-1px);
+  }
+  
+  .ot-btn-secondary {
+    flex: 1;
+    background: transparent;
+    color: var(--ot-gray-600);
+    border-color: var(--ot-gray-300);
+  }
+  
+  .ot-btn-secondary:hover {
+    background: var(--ot-gray-50);
+  }
+  
+  .ot-btn-danger {
+    flex: 1;
+    background: var(--ot-red);
+    color: white;
+  }
+  
+  .ot-btn-danger:hover {
+    background: #dc2626;
+  }
+  
+  .ot-btn.full-width {
+    width: 100%;
+    flex: 1;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     DIALOGS
+     ─────────────────────────────────────────────────────────── */
+  .ot-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  
+  .ot-dialog {
+    background: var(--ot-white);
+    border-radius: var(--ot-radius-xl);
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--ot-shadow-lg);
+  }
+  
+  .ot-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .ot-dialog-icon-wrap {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ot-radius-md);
+    flex-shrink: 0;
+  }
+  
+  .ot-dialog-icon-wrap.warning {
+    background: rgba(249, 115, 22, 0.12);
+  }
+  
+  .ot-icon-warning {
+    color: var(--ot-orange);
+  }
+  
+  .ot-dialog-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ot-black);
+  }
+  
+  .ot-dialog-text {
+    margin: 0 0 20px 0;
+    font-size: 13.5px;
+    color: var(--ot-gray-600);
+    line-height: 1.5;
+  }
+  
+  .ot-dialog-text.center {
+    text-align: center;
+  }
+  
+  .ot-dialog-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     DIALOG COMPLÉTION
+     ─────────────────────────────────────────────────────────── */
+  .ot-completion-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ot-green-light);
+    border-radius: var(--ot-radius-full);
+    color: var(--ot-green);
+  }
+  
+  .ot-completion-title {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--ot-black);
+  }
+  
+  .ot-rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 12px 0 8px;
+  }
+  
+  .ot-star-filled {
+    color: var(--ot-amber);
+    cursor: pointer;
+    transition: var(--ot-transition);
+  }
+  
+  .ot-star-filled:hover {
+    transform: scale(1.15);
+  }
+  
+  .ot-rating-text {
+    margin: 0 0 20px 0;
+    font-size: 12px;
+    color: var(--ot-gray-500);
+    text-align: center;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     RESPONSIVE
+     ─────────────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .ot-map-container {
+      height: 220px;
+      margin: 12px;
+    }
+  
+    .ot-content {
+      padding: 0 12px;
+    }
+  
+    .ot-livreur-card,
+    .ot-timeline-card,
+    .ot-summary-card {
+      padding: 14px;
+    }
+  
+    .ot-eta-card {
+      padding: 16px 12px;
+    }
+  
+    .ot-eta-value {
+      font-size: 14px;
+    }
+  
+    .ot-eta-label {
+      font-size: 10px;
+    }
+  
+    .ot-bottom-actions {
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    }
+  
+    .ot-btn {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+  }
+
+  /* Style du bouton FedaPay (généré par fedapay-reactjs) */
+.fedapay-pay-btn {
+  width: 100%;
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+  background: white !important;
+  color: #667eea !important;
+  border: none !important;
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+}
+
+.fedapay-pay-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   CARTE DE PARTAGE DU LIEN DE SUIVI
+   ═══════════════════════════════════════════════════════════ */
+   .ot-share-card {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    border: 1px solid #ffedd5;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.05);
+  }
+  
+  .ot-share-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .ot-share-icon {
+    color: #f97316;
+  }
+  
+  .ot-share-desc {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+  }
+  
+  .ot-share-url-box {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  
+  .ot-share-url-box:focus-within {
+    border-color: #f97316;
+  }
+  
+  .ot-share-url-text {
+    flex: 1;
+    font-size: 12px;
+    color: #374151;
+    padding: 8px 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: monospace;
+  }
+  
+  .ot-copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f97316;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .ot-copy-btn:hover {
+    background: #ea580c;
+    transform: scale(1.05);
+  }
+  
+  .ot-whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: #25D366; /* Vert WhatsApp officiel */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.2);
+  }
+  
+  .ot-whatsapp-btn:hover {
+    background: #128C7E;
+    transform: translateY(-1px);
+  }

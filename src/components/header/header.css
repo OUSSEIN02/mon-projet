@@ -1,8 +1,9 @@
 /* ============================================
    HEADER - COMPOSANT RÉUTILISABLE
+   Préfixe: yd- (YouDégo)
    ============================================ */
 
-   .header {
+   .yd-header {
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -13,12 +14,12 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  .header.scrolled {
+  .yd-header.yd-header-scrolled {
     background: rgba(255, 255, 255, 0.97);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
   }
   
-  .nav-wrap {
+  .yd-nav-wrap {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -29,31 +30,31 @@
   }
   
   /* Logo */
-  .logo {
+  .yd-logo {
     display: flex;
     align-items: center;
     flex-shrink: 0;
     transition: transform 0.3s ease;
   }
   
-  .logo:hover {
+  .yd-logo:hover {
     transform: scale(1.03);
   }
   
-  .logo img {
+  .yd-logo img {
     height: 70px;
     width: auto;
     display: block;
   }
   
   /* Navigation principale */
-  .main-nav {
+  .yd-main-nav {
     display: flex;
     gap: 8px;
     align-items: center;
   }
   
-  .main-nav a {
+  .yd-main-nav a {
     position: relative;
     text-decoration: none;
     color: #1a1a1a;
@@ -65,7 +66,7 @@
     z-index: 1;
   }
   
-  .main-nav a::before {
+  .yd-main-nav a::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -77,23 +78,26 @@
     z-index: -1;
   }
   
-  .main-nav a:hover::before,
-  .main-nav a.active::before {
+  .yd-main-nav a:hover::before,
+  .yd-main-nav a.yd-nav-active::before {
     transform: scaleX(1);
   }
   
-  .main-nav a:hover,
-  .main-nav a.active {
+  .yd-main-nav a:hover,
+  .yd-main-nav a.yd-nav-active {
     color: #fff;
     transform: translateY(-2px);
   }
   
   /* CTA Desktop */
-  .header-cta {
+  .yd-header-cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-left: 20px;
   }
   
-  .header-cta .btn {
+  .yd-header-cta .yd-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -106,28 +110,50 @@
     text-decoration: none;
   }
   
+  .yd-btn-login {
+    background: transparent;
+    border: 1px solid #f26a22;
+    color: #f26a22;
+  }
+  
+  .yd-btn-login:hover {
+    background: #f26a22;
+    color: #ffffff;
+  }
+  
   /* Bouton mobile dans le menu */
-  .mobile-download-btn {
+  .yd-mobile-download-btn {
     width: 100%;
     text-align: center;
     margin-top: 16px;
   }
   
+  /* NOUVEAU : Conteneur pour les boutons d'action mobile (Connexion + Télécharger) */
+  .yd-mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+  
   /* Styles communs des boutons */
-  .btn-orange {
+  .yd-btn-orange {
     background: linear-gradient(135deg, #F26A22 0%, #FF8A50 100%);
     color: #fff;
     box-shadow: 0 8px 25px -6px rgba(242, 106, 34, 0.5);
   }
   
-  .btn-orange:hover {
+  .yd-btn-orange:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 15px 35px -8px rgba(242, 106, 34, 0.6);
     color: #fff;
   }
   
   /* Burger menu */
-  .burger {
+  .yd-burger {
     display: none;
     font-size: 24px;
     background: none;
@@ -139,12 +165,12 @@
     cursor: pointer;
   }
   
-  .burger:hover {
+  .yd-burger:hover {
     background: rgba(0, 0, 0, 0.05);
   }
   
   /* Animation du menu mobile */
-  @keyframes slideDown {
+  @keyframes yd-slideDown {
     from {
       opacity: 0;
       transform: translateY(-10px);
@@ -161,27 +187,26 @@
   
   /* Tablette et mobile */
   @media (max-width: 768px) {
-    .nav-wrap {
+    .yd-nav-wrap {
       padding: 0 24px;
-      height: 68px;
     }
   
-    .logo img {
+    .yd-logo img {
       height: 55px;
     }
   
     /* Cacher le CTA desktop */
-    .header-cta {
+    .yd-header-cta {
       display: none !important;
     }
   
     /* Afficher le burger */
-    .burger {
+    .yd-burger {
       display: block !important;
     }
   
     /* Menu mobile */
-    .main-nav {
+    .yd-main-nav {
       display: none;
       position: absolute;
       top: 68px;
@@ -197,52 +222,56 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
   
-    .main-nav.open {
+    .yd-main-nav.yd-main-nav-open {
       display: flex !important;
-      animation: slideDown 0.3s ease forwards;
+      animation: yd-slideDown 0.3s ease forwards;
     }
   
-    .main-nav a {
+    .yd-main-nav a {
       width: 100%;
       text-align: center;
       padding: 12px 18px;
       font-size: 15px;
     }
   
-    .main-nav a::before {
+    .yd-main-nav a::before {
       display: none;
     }
   
-    .main-nav a:hover,
-    .main-nav a.active {
+    .yd-main-nav a:hover,
+    .yd-main-nav a.yd-nav-active {
       background: linear-gradient(135deg, #F26A22 0%, #FF8A50 100%);
       color: #fff;
       transform: translateY(0);
+    }
+  
+    /* NOUVEAU : Préserver la couleur de fond solide au hover pour le bouton Connexion */
+    .yd-main-nav a.yd-btn-login:hover {
+      background: #f26a22;
     }
   }
   
   /* Petit mobile */
   @media (max-width: 640px) {
-    .nav-wrap {
+    .yd-nav-wrap {
       padding: 0 16px;
-      height: 62px;
     }
   
-    .logo img {
+    .yd-logo img {
       height: 48px;
     }
   
-    .main-nav {
+    .yd-main-nav {
       top: 62px;
       padding: 16px;
     }
   
-    .main-nav a {
+    .yd-main-nav a {
       padding: 10px 16px;
       font-size: 14px;
     }
   
-    .mobile-download-btn {
+    .yd-mobile-download-btn {
       margin-top: 12px;
       padding: 12px 20px;
       font-size: 14px;
@@ -251,31 +280,29 @@
   
   /* Très petit mobile */
   @media (max-width: 400px) {
-    .nav-wrap {
+    .yd-nav-wrap {
       padding: 0 12px;
-      height: 56px;
     }
   
-    .logo img {
-      height: 40px;
+    .yd-logo img {
+      height: 55px;
     }
   
-    .main-nav {
-      top: 56px;
+    .yd-main-nav {
+      top: 75px;
       padding: 12px;
     }
   
-    .main-nav a {
+    .yd-main-nav a {
       padding: 8px 12px;
       font-size: 13px;
     }
   
-    .burger {
-      font-size: 20px;
+    .yd-burger {
       padding: 6px 10px;
     }
   
-    .mobile-download-btn {
+    .yd-mobile-download-btn {
       padding: 10px 16px;
       font-size: 13px;
     }
@@ -285,7 +312,7 @@
      UTILITAIRES
      ============================================ */
   
-  .container {
+  .yd-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 40px;
@@ -293,19 +320,19 @@
   
   /* Version responsive du container */
   @media (max-width: 768px) {
-    .container {
+    .yd-container {
       padding: 0 24px;
     }
   }
   
   @media (max-width: 640px) {
-    .container {
+    .yd-container {
       padding: 0 16px;
     }
   }
   
   @media (max-width: 400px) {
-    .container {
+    .yd-container {
       padding: 0 12px;
     }
   }

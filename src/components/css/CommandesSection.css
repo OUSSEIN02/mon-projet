@@ -262,3 +262,28 @@
   .cmd-page-btn.active:hover {
     background-color: #ea580c;
   }
+
+  /* Style pour le lien du livreur */
+.cmd-livreur-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cmd-livreur-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Optionnel : ajouter une icône externe pour indiquer que c'est cliquable */
+.cmd-livreur-link::after {
+  content: ' ↗';
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cmd-livreur-link:hover::after {
+  opacity: 1;
+}

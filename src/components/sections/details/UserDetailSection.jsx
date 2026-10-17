@@ -38,7 +38,7 @@ const UserDetailSection = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // 1. Chargement des rôles (commun à création et édition)
+  // 1. Chargement des rôles
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -66,10 +66,9 @@ const UserDetailSection = () => {
             name: user.name || '',
             email: user.email || '',
             phone: user.phone || '',
-            password: '' // On ne pré-remplit jamais le mot de passe
+            password: ''
           });
           
-          // Extraire les IDs des rôles assignés
           if (user.roles && Array.isArray(user.roles)) {
             setSelectedRoleIds(user.roles.map(r => r.id));
           }
@@ -148,7 +147,6 @@ const UserDetailSection = () => {
       const errorMsg = error.response?.data?.message || 'Une erreur est survenue';
       toast.error(errorMsg);
       
-      // Gestion des erreurs de validation Laravel (ex: email unique)
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       }
@@ -238,7 +236,6 @@ const UserDetailSection = () => {
 
       {/* Formulaire principal */}
       <form onSubmit={handleSubmit} className="ud-card">
-        {/* Informations de base */}
         <div className="ud-card-body">
           <h3 className="ud-section-title">Informations de base</h3>
           
@@ -331,62 +328,54 @@ const UserDetailSection = () => {
           </div>
 
           {/* Section des rôles et permissions */}
-          {/* Section des rôles et permissions */}
-        <div className="ud-roles-section">
-        <h3 className="ud-section-title">Rôles et permissions</h3>
-        {errors.roles && <p className="ud-error-text ud-error-block">{errors.roles}</p>}
-        
-        <div className="ud-roles-grid">
-            {roles.map(role => {
-            const isSelected = selectedRoleIds.includes(role.id);
-            return (
-                <div 
-                key={role.id} 
-                className={`ud-role-card ${isSelected ? 'ud-role-selected' : ''}`}
-                >
-                <div className="ud-role-header">
-                    <div className="ud-role-checkbox-wrapper">
-                    <input
-                        type="checkbox"
-                        id={`role-${role.id}`}
-                        checked={isSelected}
-                        onChange={() => handleRoleToggle(role.id)}
-                        className="ud-checkbox"
-                    />
-                    {isSelected && <Check size={14} className="ud-checkbox-icon" />}
+          <div className="ud-roles-section">
+            <h3 className="ud-section-title">Rôles et permissions</h3>
+            {errors.roles && <p className="ud-error-text ud-error-block">{errors.roles}</p>}
+            
+            <div className="ud-roles-grid">
+              {roles.map(role => {
+                const isSelected = selectedRoleIds.includes(role.id);
+                return (
+                  <div key={role.id} className={`ud-role-card ${isSelected ? 'ud-role-selected' : ''}`}>
+                    <div className="ud-role-header">
+                      <div className="ud-role-checkbox-wrapper">
+                        <input
+                          type="checkbox"
+                          id={`role-${role.id}`}
+                          checked={isSelected}
+                          onChange={() => handleRoleToggle(role.id)}
+                          className="ud-checkbox"
+                        />
+                        {isSelected && <Check size={14} className="ud-checkbox-icon" />}
+                      </div>
+                      <div className="ud-role-info">
+                        <h4 className="ud-role-name">{role.name}</h4>
+                        {role.description && (
+                          <p className="ud-role-description">{role.description}</p>
+                        )}
+                      </div>
                     </div>
-                    <div className="ud-role-info">
-                    <h4 className="ud-role-name">{role.name}</h4>
-                    {role.description && (
-                        <p className="ud-role-description">{role.description}</p>
+                    
+                    {role.permissions && role.permissions.length > 0 && (
+                      <div className="ud-permissions-list">
+                        <div className="ud-permissions-grid">
+                          {role.permissions.map((permission) => (
+                            <span key={permission.id} className="ud-permission-item">
+                              {permission.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                    </div>
-                </div>
-                
-                {/* Affichage de TOUTES les permissions du rôle */}
-                {role.permissions && role.permissions.length > 0 && (
-                    <div className="ud-permissions-list">
-                    <div className="ud-permissions-grid">
-                        {role.permissions.map((permission) => (
-                        <span 
-                            key={permission.id} 
-                            className="ud-permission-item"
-                        >
-                            {permission.name}
-                        </span>
-                        ))}
-                    </div>
-                    </div>
-                )}
-                
-                {(!role.permissions || role.permissions.length === 0) && (
-                    <p className="ud-no-permissions">Aucune permission</p>
-                )}
-                </div>
-            );
-            })}
-        </div>
-        </div>
+                    
+                    {(!role.permissions || role.permissions.length === 0) && (
+                      <p className="ud-no-permissions">Aucune permission</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* Actions */}
@@ -483,6 +472,7 @@ const UserDetailSection = () => {
                 )}
               </div>
 
+              {/* CORRECTION ICI : Les boutons s'empilent proprement sur mobile */}
               <div className="ud-modal-actions">
                 <button 
                   type="button" 
@@ -525,403 +515,124 @@ const UserDetailSection = () => {
         }
 
         /* Header & Breadcrumb */
-        .ud-header {
-          margin-bottom: 24px;
-        }
-        .ud-breadcrumb {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          margin-bottom: 16px;
-          color: #6b7280;
-        }
-        .ud-breadcrumb-link {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: #6b7280;
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 14px;
-          transition: color 0.2s;
-        }
-        .ud-breadcrumb-link:hover {
-          color: #F26A22;
-        }
-        .ud-breadcrumb-separator {
-          color: #d1d5db;
-        }
-        .ud-breadcrumb-current {
-          font-weight: 500;
-          color: #111827;
-        }
-        .ud-title {
-          font-size: 24px;
-          font-weight: 700;
-          color: #111827;
-          margin: 0 0 4px 0;
-        }
-        .ud-subtitle {
-          font-size: 14px;
-          color: #6b7280;
-          margin: 0;
-        }
+        .ud-header { margin-bottom: 24px; }
+        .ud-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 16px; color: #6b7280; }
+        .ud-breadcrumb-link { display: flex; align-items: center; gap: 6px; color: #6b7280; background: none; border: none; cursor: pointer; font-size: 14px; transition: color 0.2s; }
+        .ud-breadcrumb-link:hover { color: #F26A22; }
+        .ud-breadcrumb-separator { color: #d1d5db; }
+        .ud-breadcrumb-current { font-weight: 500; color: #111827; }
+        .ud-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px 0; }
+        .ud-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
 
         /* Carte principale */
-        .ud-card {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-          border: 1px solid #f3f4f6;
-          overflow: hidden;
-        }
-        .ud-card-body {
-          padding: 24px;
-        }
-        .ud-section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #111827;
-          margin: 0 0 20px 0;
-          padding-bottom: 12px;
-          border-bottom: 1px solid #f3f4f6;
-        }
+        .ud-card { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; overflow: hidden; }
+        .ud-card-body { padding: 24px; }
+        .ud-section-title { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6; }
 
         /* Formulaire Grid */
-        .ud-form-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 20px;
-        }
-        .ud-form-group {
-          display: flex;
-          flex-direction: column;
-        }
-        .ud-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #374151;
-          margin-bottom: 6px;
-        }
-        .ud-required {
-          color: #dc2626;
-        }
-        .ud-input-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-        .ud-input-icon {
-          position: absolute;
-          left: 12px;
-          color: #9ca3af;
-          pointer-events: none;
-        }
-        .ud-input {
-          width: 100%;
-          padding: 10px 14px 10px 40px;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          font-size: 14px;
-          color: #111827;
-          background: white;
-          transition: all 0.2s;
-        }
-        .ud-input:focus {
-          outline: none;
-          border-color: #F26A22;
-          box-shadow: 0 0 0 3px rgba(242, 106, 34, 0.1);
-        }
-        .ud-input.ud-error {
-          border-color: #dc2626;
-        }
-        .ud-input.ud-error:focus {
-          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-        }
-        .ud-input-toggle {
-          position: absolute;
-          right: 12px;
-          background: none;
-          border: none;
-          color: #9ca3af;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          padding: 4px;
-        }
-        .ud-input-toggle:hover {
-          color: #6b7280;
-        }
-        .ud-error-text {
-          font-size: 12px;
-          color: #dc2626;
-          margin-top: 4px;
-          margin-bottom: 0;
-        }
-        .ud-error-block {
-          margin-bottom: 16px;
-          font-weight: 500;
-        }
+        .ud-form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .ud-form-group { display: flex; flex-direction: column; }
+        .ud-label { font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        .ud-required { color: #dc2626; }
+        .ud-input-wrapper { position: relative; display: flex; align-items: center; }
+        .ud-input-icon { position: absolute; left: 12px; color: #9ca3af; pointer-events: none; }
+        .ud-input { width: 100%; padding: 10px 14px 10px 40px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; color: #111827; background: white; transition: all 0.2s; }
+        .ud-input:focus { outline: none; border-color: #F26A22; box-shadow: 0 0 0 3px rgba(242, 106, 34, 0.1); }
+        .ud-input.ud-error { border-color: #dc2626; }
+        .ud-input.ud-error:focus { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+        .ud-input-toggle { position: absolute; right: 12px; background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; padding: 4px; }
+        .ud-input-toggle:hover { color: #6b7280; }
+        .ud-error-text { font-size: 12px; color: #dc2626; margin-top: 4px; margin-bottom: 0; }
+        .ud-error-block { margin-bottom: 16px; font-weight: 500; }
 
-        /* Section Rôles - Style amélioré */
         /* Section Rôles */
-.ud-roles-section {
-  margin-top: 32px;
-}
-.ud-roles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-}
-.ud-role-card {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  border: 2px solid #e5e7eb;
-  border-radius: 10px;
-  background: white;
-  transition: all 0.2s;
-  min-height: 200px;
-}
-.ud-role-card:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.ud-role-card.ud-role-selected {
-  border-color: #F26A22;
-  background: #fff7ed;
-  box-shadow: 0 2px 8px rgba(242, 106, 34, 0.15);
-}
-.ud-role-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.ud-role-checkbox-wrapper {
-  position: relative;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.ud-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #d1d5db;
-  border-radius: 5px;
-  cursor: pointer;
-  appearance: none;
-  transition: all 0.2s;
-}
-.ud-role-selected .ud-checkbox {
-  background: #F26A22;
-  border-color: #F26A22;
-}
-.ud-checkbox-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  pointer-events: none;
-}
-.ud-role-info {
-  flex: 1;
-}
-.ud-role-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0 0 4px 0;
-}
-.ud-role-description {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-  line-height: 1.4;
-}
+        .ud-roles-section { margin-top: 32px; }
+        .ud-roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .ud-role-card { display: flex; flex-direction: column; padding: 20px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; transition: all 0.2s; min-height: 200px; }
+        .ud-role-card:hover { border-color: #d1d5db; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .ud-role-card.ud-role-selected { border-color: #F26A22; background: #fff7ed; box-shadow: 0 2px 8px rgba(242, 106, 34, 0.15); }
+        .ud-role-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .ud-role-checkbox-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
+        .ud-checkbox { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 5px; cursor: pointer; appearance: none; transition: all 0.2s; }
+        .ud-role-selected .ud-checkbox { background: #F26A22; border-color: #F26A22; }
+        .ud-checkbox-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; pointer-events: none; }
+        .ud-role-info { flex: 1; }
+        .ud-role-name { font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 4px 0; }
+        .ud-role-description { font-size: 13px; color: #6b7280; margin: 0; line-height: 1.4; }
 
-/* Liste des permissions - AFFICHAGE COMPLET */
-.ud-permissions-list {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #f3f4f6;
-}
-.ud-permissions-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.ud-permission-item {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  background: #f3f4f6;
-  color: #374151;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s;
-}
-.ud-role-selected .ud-permission-item {
-  background: white;
-  border-color: #fdba74;
-  color: #c24b0e;
-}
-.ud-no-permissions {
-  font-size: 13px;
-  color: #9ca3af;
-  font-style: italic;
-  margin: 0;
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid #f3f4f6;
-}
+        /* Liste des permissions */
+        .ud-permissions-list { margin-top: auto; padding-top: 16px; border-top: 1px solid #f3f4f6; }
+        .ud-permissions-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ud-permission-item { display: inline-flex; align-items: center; padding: 6px 12px; background: #f3f4f6; color: #374151; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #e5e7eb; transition: all 0.2s; }
+        .ud-role-selected .ud-permission-item { background: white; border-color: #fdba74; color: #c24b0e; }
+        .ud-no-permissions { font-size: 13px; color: #9ca3af; font-style: italic; margin: 0; margin-top: auto; padding-top: 16px; border-top: 1px solid #f3f4f6; }
 
         /* Footer & Boutons */
-        .ud-card-footer {
-          padding: 16px 24px;
-          background: #f9fafb;
-          border-top: 1px solid #f3f4f6;
-          display: flex;
-          justify-content: flex-end;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .ud-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 10px 20px;
-          font-size: 14px;
-          font-weight: 600;
-          border-radius: 8px;
-          border: 1px solid transparent;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-        }
-        .ud-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-        .ud-btn-primary {
-          background: #F26A22;
-          color: white;
-          box-shadow: 0 2px 4px rgba(242, 106, 34, 0.2);
-        }
-        .ud-btn-primary:hover:not(:disabled) {
-          background: #d95a1a;
-        }
-        .ud-btn-secondary {
-          background: white;
-          color: #374151;
-          border-color: #d1d5db;
-        }
-        .ud-btn-secondary:hover:not(:disabled) {
-          background: #f3f4f6;
-          border-color: #9ca3af;
-        }
-        .ud-btn-outline {
-          background: white;
-          color: #F26A22;
-          border-color: #fdba74;
-        }
-        .ud-btn-outline:hover:not(:disabled) {
-          background: #fff7ed;
-          border-color: #F26A22;
-        }
-        .ud-spinner-btn {
-          animation: ud-spin 1s linear infinite;
-        }
-        @keyframes ud-spin {
-          to { transform: rotate(360deg); }
-        }
+        .ud-card-footer { padding: 16px 24px; background: #f9fafb; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+        .ud-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .ud-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .ud-btn-primary { background: #F26A22; color: white; box-shadow: 0 2px 4px rgba(242, 106, 34, 0.2); }
+        .ud-btn-primary:hover:not(:disabled) { background: #d95a1a; }
+        .ud-btn-secondary { background: white; color: #374151; border-color: #d1d5db; }
+        .ud-btn-secondary:hover:not(:disabled) { background: #f3f4f6; border-color: #9ca3af; }
+        .ud-btn-outline { background: white; color: #F26A22; border-color: #fdba74; }
+        .ud-btn-outline:hover:not(:disabled) { background: #fff7ed; border-color: #F26A22; }
+        .ud-spinner-btn { animation: ud-spin 1s linear infinite; }
+        @keyframes ud-spin { to { transform: rotate(360deg); } }
 
         /* Modal */
-        .ud-modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(17, 24, 39, 0.6);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 16px;
-          z-index: 50;
-          animation: ud-fade-in 0.2s ease-out;
-        }
-        @keyframes ud-fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .ud-modal {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-          max-width: 480px;
-          width: 100%;
-          animation: ud-scale-in 0.2s ease-out;
-        }
-        @keyframes ud-scale-in {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .ud-modal-header {
-          padding: 24px 24px 0 24px;
-        }
-        .ud-modal-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: #111827;
-          margin: 0 0 8px 0;
-        }
-        .ud-modal-subtitle {
-          font-size: 14px;
-          color: #6b7280;
-          margin: 0;
-        }
-        .ud-modal-body {
-          padding: 24px;
-        }
-        .ud-modal-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 12px;
-          margin-top: 24px;
-        }
+        .ud-modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; animation: ud-fade-in 0.2s ease-out; }
+        @keyframes ud-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .ud-modal { background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; animation: ud-scale-in 0.2s ease-out; }
+        @keyframes ud-scale-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .ud-modal-header { padding: 24px 24px 0 24px; }
+        .ud-modal-title { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
+        .ud-modal-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+        .ud-modal-body { padding: 24px; }
+        
+        /* CORRECTION MODAL ACTIONS : Flex classique pour desktop */
+        .ud-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
 
         /* Loading State */
-        .ud-loading {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 400px;
-          color: #6b7280;
-        }
-        .ud-spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid #f3f4f6;
-          border-top-color: #F26A22;
-          border-radius: 50%;
-          animation: ud-spin 0.8s linear infinite;
-          margin-bottom: 16px;
-        }
+        .ud-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #6b7280; }
+        .ud-spinner { width: 40px; height: 40px; border: 3px solid #f3f4f6; border-top-color: #F26A22; border-radius: 50%; animation: ud-spin 0.8s linear infinite; margin-bottom: 16px; }
 
-        /* Responsive */
+        /* ================= RESPONSIVE ================= */
         @media (min-width: 640px) {
-          .ud-form-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
+          .ud-form-grid { grid-template-columns: repeat(2, 1fr); }
         }
+        
         @media (max-width: 639px) {
-          .ud-roles-grid {
-            grid-template-columns: 1fr;
+          .ud-roles-grid { grid-template-columns: 1fr; }
+          
+          /* CORRECTION MOBILE : Empilement vertical des boutons du modal */
+          .ud-modal-actions {
+            flex-direction: column;
+            gap: 12px;
+          }
+          
+          .ud-modal-actions .ud-btn {
+            width: 100%;
+            justify-content: center;
+            white-space: normal; /* Autorise le retour à la ligne si nécessaire */
+          }
+          
+          .ud-modal {
+            margin: 8px;
+            max-height: 95vh;
+          }
+          
+          .ud-modal-header, .ud-modal-body {
+            padding: 16px;
+          }
+          
+          .ud-card-footer {
+            flex-direction: column-reverse;
+            align-items: stretch;
+          }
+          
+          .ud-card-footer .ud-btn {
+            width: 100%;
           }
         }
       `}</style>

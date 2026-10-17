@@ -306,3 +306,36 @@
 @keyframes pr-spin {
   to { transform: rotate(360deg); }
 }
+
+
+/* =========================================
+   SÉCURISATION CHAMP EMAIL VENDEUR
+   ========================================= */
+   .pr-input-disabled {
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    border-color: #cbd5e1 !important;
+    cursor: not-allowed !important;
+    user-select: none !important;
+  }
+  
+  .pr-input-disabled:focus {
+    outline: none !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+  
+  .pr-locked-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    border: 1px solid #fecaca;
+    text-transform: uppercase;
+  }

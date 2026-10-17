@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Mail, Phone, MapPin, Truck, Star, 
   CheckCircle, XCircle, Clock, Shield, Award, TrendingUp, Timer, User,
-  Download, ExternalLink, AlertTriangle, Camera, FileText, ShieldCheck
+  Download, ExternalLink, AlertTriangle, Camera, FileText, ShieldCheck,
+  MessageSquare // <-- AJOUT : Icône pour la messagerie
 } from 'lucide-react';
 
 import apiClient from '../../../services/apiClient';
@@ -57,6 +58,35 @@ const LivreurDetailsSection = () => {
 
   const handleGoBack = useCallback(() => navigate('/dashboard/livreurs'), [navigate]);
 
+  // --- NOUVEAU : Fonction pour démarrer une conversation ---
+  const handleStartChat = async () => {
+    try {
+      // On récupère l'ID de l'utilisateur lié au livreur
+      const recipientId = livreur.user_id || livreur.user?.id;
+      
+      if (!recipientId) {
+        toast.error("ID utilisateur du livreur introuvable.");
+        return;
+      }
+      
+      setIsProcessing(true);
+      const response = await apiClient.post('/dashboard/messages/start', {
+        recipient_id: recipientId
+      });
+      
+      toast.success("Conversation ouverte avec succès !");
+      
+      // Redirection vers la page de messagerie avec l'ID de conversation en paramètre
+      navigate(`/dashboard/messages?conversation=${response.data.conversation_id}`);
+      
+    } catch (error) {
+      console.error("Erreur lors du démarrage de la conversation:", error);
+      toast.error(error.response?.data?.message || "Impossible de démarrer la conversation.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const closeModal = () => {
     setActionType(null);
     setActionReason('');
@@ -99,11 +129,11 @@ const LivreurDetailsSection = () => {
           setIsProcessing(false);
           return;
         }
-        endpoint = `/dashboard/livreurs/${livreur.id}/suspend`; // Adaptez si votre route est différente (ex: /block)
+        endpoint = `/dashboard/livreurs/${livreur.id}/suspend`;
         payload = { reason: actionReason };
         successMessage = "Compte du livreur suspendu avec succès.";
       } else if (actionType === 'reactivate') {
-        endpoint = `/dashboard/livreurs/${livreur.id}/validate`; // Ou /reactivate selon votre API
+        endpoint = `/dashboard/livreurs/${livreur.id}/validate`;
         payload = { reason: actionReason || "Réactivation administrative" };
         successMessage = "Compte du livreur réactivé avec succès.";
       }
@@ -115,7 +145,7 @@ const LivreurDetailsSection = () => {
       if (actionType === 'approve') setLivreur(prev => ({ ...prev, status: 'valide' }));
       if (actionType === 'reject') setLivreur(prev => ({ ...prev, status: 'rejete' }));
       if (actionType === 'suspend') setLivreur(prev => ({ ...prev, status: 'suspendu' }));
-      if (actionType === 'reactivate') setLivreur(prev => ({ ...prev, status: 'valide' })); // ou 'actif'
+      if (actionType === 'reactivate') setLivreur(prev => ({ ...prev, status: 'valide' }));
       
       closeModal();
     } catch (err) {
@@ -386,13 +416,14 @@ const LivreurDetailsSection = () => {
                   <span className="ld-stat-label">Livraisons</span>
                 </div>
                 <div className="ld-stat-box">
-                  <span className="ld-stat-number">{livreur.note_moyenne ?? 'N/A'}</span>
-                  <span className="ld-stat-label">Note / 5</span>
-                </div>
-                <div className="ld-stat-box">
-                  <span className="ld-stat-number">{livreur.taux_acceptation ?? 'N/A'}%</span>
-                  <span className="ld-stat-label">Acceptation</span>
-                </div>
+                  <span className="ld-stat-number">
+                      {livreur.note_moyenne ?? 'N/A'}
+                  </span>
+                  <span className="ld-stat-label">
+                      Note / 5
+                  </span>
+              </div>
+                            
               </div>
             </div>
           </div>
@@ -454,6 +485,20 @@ const LivreurDetailsSection = () => {
 
                   <button onClick={() => setActionType('assign')} className="ld-btn ld-w-full" style={{ backgroundColor: '#2563eb', color: 'white', marginBottom: '12px' }}>
                     <Shield size={16} className="inline mr-2" /> Attribuer une commande
+                  </button>
+
+                  {/* <-- NOUVEAU : Bouton pour contacter le livreur --> */}
+                  <button 
+                    onClick={handleStartChat} 
+                    className="ld-btn ld-w-full" 
+                    disabled={isProcessing}
+                    style={{ backgroundColor: '#f0672b', color: 'white', marginBottom: '12px' }}
+                  >
+                    {isProcessing ? (
+                      <><span className="ld-spinner" style={{ borderColor: 'white', borderTopColor: 'transparent' }} /> Ouverture...</>
+                    ) : (
+                      <><MessageSquare size={16} className="inline mr-2" /> Contacter ce livreur</>
+                    )}
                   </button>
                 </>
               )}

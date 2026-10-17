@@ -2,137 +2,158 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from "../../assets/logo.jpg";
 import {
-  LayoutDashboard,
-  PlusCircle,
-  ShoppingCart,
-  MapPinned,
-  ShieldCheck,
-  History,
-  Receipt,
-  Plug,
-  PackageSearch,
-  HandHelping,
-  AlertTriangle,
-  Store,
-  Bike,
-  Map,
-  BarChart3,
-  Wallet,
-  Settings,
-  AlertCircle
+  LayoutDashboard, PlusCircle, ShoppingCart, MapPinned, ShieldCheck,
+  History, Receipt, Plug, PackageSearch, HandHelping, AlertTriangle,
+  Store, Bike, Map, BarChart3, Wallet, Settings, AlertCircle, Percent, MessageSquare
 } from 'lucide-react';
-import apiClient from '../../services/apiClient'; // Adaptez le chemin si nécessaire
+import apiClient from '../../services/apiClient';
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, litigesCount = 0 }) => {
   const location = useLocation();
   const userPermissions = JSON.parse(localStorage.getItem('permissions') || '[]');
+  const userRole = localStorage.getItem('role');
+  
+  const isAdmin = userRole === 'admin';
+  const isVendeurOrLivreur = userRole === 'vendeur' || userRole === 'livreur';
 
-  // 1. États pour les badges des nouveaux livreurs ET vendeurs
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 1. États pour les badges
   const [newCouriersCount, setNewCouriersCount] = useState(0);
   const [newSellersCount, setNewSellersCount] = useState(0);
+  const [newUnassignedOrdersCount, setNewUnassignedOrdersCount] = useState(0);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+  
+  //  NOUVEAU : État pour les paiements en attente
+  const [pendingPaymentsCount, setPendingPaymentsCount] = useState(0);
 
-  // 2. POLLING : Interroger le serveur toutes les 30 secondes pour les deux compteurs
+  // 2. POLLING
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        // Récupération du nombre de nouveaux livreurs
         const couriersRes = await apiClient.get('/admin/couriers/new-count');
         setNewCouriersCount(couriersRes.data.count);
 
-        // Récupération du nombre de nouveaux vendeurs
         const sellersRes = await apiClient.get('/admin/sellers/new-count');
         setNewSellersCount(sellersRes.data.count);
+
+        const unassignedRes = await apiClient.get('/failed-orders/recent');
+        if (unassignedRes.data?.success) {
+          setNewUnassignedOrdersCount(unassignedRes.data.count || 0);
+        }
+
+        try {
+          const messagesRes = await apiClient.get('/dashboard/messages/unread-count');
+          setUnreadMessagesCount(messagesRes.data.count || 0);
+        } catch (err) { /* Ignore silencieusement */ }
+
+        //  NOUVEAU : Récupération du nombre de paiements en attente
+        try {
+          const financesRes = await apiClient.get('/admin/withdrawals/pending-count');
+          setPendingPaymentsCount(financesRes.data.count || 0);
+        } catch (err) { /* Ignore silencieusement */ }
+
       } catch (error) {
-        // Silencieux en cas d'erreur pour ne pas spammer la console
         console.error("Erreur récupération compteurs notifications", error);
       }
     };
 
-    // Appel immédiat au chargement du composant
     fetchCounts();
-
-    // Mise en place de l'intervalle (30000 ms = 30 secondes)
-    const intervalId = setInterval(fetchCounts, 30000);
-
-    // Nettoyage de l'intervalle quand le composant est démonté
+    const intervalId = setInterval(fetchCounts, 30000); // Toutes les 30 secondes
     return () => clearInterval(intervalId);
   }, []);
 
-  // Fonction helper pour vérifier les permissions
   const hasPermission = (permission) => {
-    if (!permission) return true; 
+    if (!permission) return true;
     return userPermissions.includes(permission);
   };
 
-  // 3. Gestion centralisée du clic sur un lien
+  const isAdminHidden = (item) => {
+    if (!isAdmin) return false;
+    const hiddenLabels = ["Nouvelle commande", "Mes commandes", "Historique", "Factures", "API & Intégrations"];
+    return hiddenLabels.includes(item.label);
+  };
+
+  const isRoleHidden = (item) => {
+    if (!isVendeurOrLivreur) return false;
+    const hiddenForThem = ["Paramètres", "Paramètres système"];
+    return hiddenForThem.includes(item.label);
+  };
+
+  const isMobileHidden = (item) => {
+    if (!isMobile) return false;
+    if (!isAdmin) return false;
+    return item.path === '/dashboard/livreurs' || item.path === '/dashboard/vendeurs';
+  };
+
+  const shouldRenderItem = (item) => {
+    if (!hasPermission(item.permission)) return false;
+    if (isAdminHidden(item)) return false;
+    if (isMobileHidden(item)) return false;
+    if (isRoleHidden(item)) return false;
+    
+    if (item.path === '/dashboard/mes-gains' && userRole !== 'seller') {
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleLinkClick = (path) => {
-    // Réinitialiser le badge Livreurs si on clique dessus
-    if (path === '/dashboard/livreurs') {
-      setNewCouriersCount(0);
-    }
-    // Réinitialiser le badge Vendeurs si on clique dessus
-    if (path === '/dashboard/vendeurs') {
-      setNewSellersCount(0);
-    }
-    // Fermer le menu sur mobile après un clic
+    if (path === '/dashboard/livreurs') setNewCouriersCount(0);
+    if (path === '/dashboard/vendeurs') setNewSellersCount(0);
+    if (path === '/dashboard/attributions') setNewUnassignedOrdersCount(0);
+    if (path === '/dashboard/messages') setUnreadMessagesCount(0);
+    
+    // 🟢 NOUVEAU : Réinitialiser le badge quand on clique sur Paiements
+    if (path === '/dashboard/finances') setPendingPaymentsCount(0);
+    
     if (onClose) onClose();
   };
 
-  // 4. Définition complète des éléments du menu
   const menuItems = [
-    {
-      path: "/dashboard",
-      icon: LayoutDashboard,
-      label: "Tableau de bord",
-      permission: null,
-    },
+    { path: "/dashboard", icon: LayoutDashboard, label: "Tableau de bord", permission: null },
     {
       section: "MES LIVRAISONS",
       items: [
         { path: "/dashboard/nouvelle-commande", icon: PlusCircle, label: "Nouvelle commande", permission: "create-seller-order" },
         { path: "/dashboard/commandes", icon: ShoppingCart, label: "Mes commandes", permission: "view-my-orders" },
-        { path: "/dashboard/historique", icon: History, label: "Historique", permission: "view-my-orders" },
-        { path: "/dashboard/factures", icon: Receipt, label: "Factures", permission: "view-my-invoices" },
-      ],
-    },
-    {
-      section: "MON COMPTE",
-      items: [
-        { path: "/dashboard/integrations", icon: Plug, label: "API & Intégrations", permission: "manage-seller-api" },
-        { path: "/dashboard/parametres", icon: Settings, label: "Paramètres", permission: "manage-seller-profile" },
+        { path: "/dashboard/historique", icon: History, label: "Historiques", permission: "view-my-orders" },
       ],
     },
     {
       section: "EXPLOITATION",
       items: [
         { path: "/dashboard/commandes", icon: PackageSearch, label: "Toutes les commandes", permission: "view-all-orders" },
-        { path: "/dashboard/attributions", icon: HandHelping, label: "Attributions", permission: "manage-assignments" },
-        { path: "/dashboard/litiges", icon: AlertTriangle, label: "Litiges", permission: "manage-disputes" },
+        { path: "/dashboard/attributions", icon: HandHelping, label: "Attributions", permission: "manage-assignments", isAttributionsLink: true },
+        { path: "/dashboard/litiges", icon: AlertTriangle, label: "Litiges", permission: "manage-disputes", isLitigeLink: true },
+      ],
+    },
+    {
+      section: "COMMUNICATION",
+      items: [
+        { path: "/dashboard/messages", icon: MessageSquare, label: "Messagerie", permission: null, isMessagesLink: true },
       ],
     },
     {
       section: "UTILISATEURS",
       items: [
-        { 
-          path: "/dashboard/vendeurs", 
-          icon: Store, 
-          label: "Vendeurs", 
-          permission: "view-sellers",
-          isVendeurLink: true // <-- FLAG IMPORTANT pour le badge Vendeur
-        },
-        { 
-          path: "/dashboard/livreurs", 
-          icon: Bike, 
-          label: "Livreurs", 
-          permission: "view-couriers",
-          isLivreurLink: true // <-- FLAG IMPORTANT pour le badge Livreur
-        },
+        { path: "/dashboard/vendeurs", icon: Store, label: "Vendeurs", permission: "view-sellers", isVendeurLink: true },
+        { path: "/dashboard/livreurs", icon: Bike, label: "Livreurs", permission: "view-couriers", isLivreurLink: true },
       ],
     },
     {
       section: "FINANCES",
       items: [
-        { path: "/dashboard/finances", icon: Wallet, label: "Paiements", permission: "manage-finances" },
+        { path: "/dashboard/mes-gains", icon: Wallet, label: "Mes gains", permission: null },
+        // 🟢 NOUVEAU : Ajout de l'identifiant isFinancesLink
+        { path: "/dashboard/finances", icon: Wallet, label: "Paiements", permission: "manage-finances", isFinancesLink: true },
         { path: "/dashboard/statistiques", icon: BarChart3, label: "Statistiques", permission: "view-statistics" },
       ],
     },
@@ -140,18 +161,18 @@ const Sidebar = ({ isOpen, onClose }) => {
       section: "CONFIGURATION",
       items: [
         { path: "/dashboard/zones", icon: Map, label: "Zones & Tarifs", permission: "manage-zones-pricing" },
+        { path: "/dashboard/pourcentages", icon: Percent, label: "Pourcentages", permission: "manage-system-settings" },
       ],
     },
     {
       section: "ADMINISTRATION",
       items: [
-        { path: "/dashboard/system-settings", icon: Settings, label: "Paramètres système", permission: "manage-system-settings" },
+        { path: "/dashboard/parametres", icon: Settings, label: "Paramètres système", permission: "manage-system-settings" },
         { path: "/dashboard/users-roles-permissions", icon: ShieldCheck, label: "Rôles & Permissions", permission: "manage-system-settings" },
       ],
     },
   ];
 
-  // Fonction pour vérifier si le lien est actif
   const isActive = (path) => {
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     if (path !== '/dashboard' && location.pathname.startsWith(path)) return true;
@@ -166,21 +187,22 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="logo-card">
             <img src={logo} alt="Gabon Livraison Express" />
           </div>
+          <div className="brand-text">
+            <strong>Gabon Livraison</strong>
+            <span>Express</span>
+          </div>
         </div>
 
         <nav className="sidebar-nav">
           {menuItems.map((item, idx) => {
-            // Cas 1 : C'est une section avec des sous-éléments
             if (item.section) {
-              const filteredSubItems = item.items.filter(subItem => hasPermission(subItem.permission));
-
-              // Ne pas afficher la section si aucun élément n'est autorisé
+              const filteredSubItems = item.items.filter(subItem => shouldRenderItem(subItem));
               if (filteredSubItems.length === 0) return null;
 
               return (
                 <div key={idx} className="sidebar-section">
                   <div className="sidebar-section-title">{item.section}</div>
-                  
+
                   {filteredSubItems.map((subItem, subIdx) => (
                     <Link
                       key={subIdx}
@@ -192,19 +214,26 @@ const Sidebar = ({ isOpen, onClose }) => {
                         <subItem.icon size={17} />
                         {subItem.label}
                       </span>
-                      
-                      {/* Badge pour les Livreurs */}
-                      {subItem.isLivreurLink && newCouriersCount > 0 && (
-                        <span className="sidebar-badge">
-                          {newCouriersCount > 99 ? '99+' : newCouriersCount}
-                        </span>
-                      )}
 
-                      {/* Badge pour les Vendeurs */}
+                      {subItem.isLivreurLink && newCouriersCount > 0 && (
+                        <span className="sidebar-badge">{newCouriersCount > 99 ? '99+' : newCouriersCount}</span>
+                      )}
                       {subItem.isVendeurLink && newSellersCount > 0 && (
-                        <span className="sidebar-badge">
-                          {newSellersCount > 99 ? '99+' : newSellersCount}
-                        </span>
+                        <span className="sidebar-badge">{newSellersCount > 99 ? '99+' : newSellersCount}</span>
+                      )}
+                      {subItem.isAttributionsLink && newUnassignedOrdersCount > 0 && (
+                        <span className="sidebar-badge">{newUnassignedOrdersCount > 99 ? '99+' : newUnassignedOrdersCount}</span>
+                      )}
+                      {subItem.isLitigeLink && litigesCount > 0 && (
+                        <span className="sidebar-badge">{litigesCount > 99 ? '99+' : litigesCount}</span>
+                      )}
+                      {subItem.isMessagesLink && unreadMessagesCount > 0 && (
+                        <span className="sidebar-badge">{unreadMessagesCount > 99 ? '99+' : unreadMessagesCount}</span>
+                      )}
+                      
+                      
+                      {subItem.isFinancesLink && pendingPaymentsCount > 0 && (
+                        <span className="sidebar-badge">{pendingPaymentsCount > 99 ? '99+' : pendingPaymentsCount}</span>
                       )}
                     </Link>
                   ))}
@@ -212,8 +241,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               );
             }
 
-            // Cas 2 : C'est un lien simple (ex: Tableau de bord)
-            if (!hasPermission(item.permission)) return null;
+            if (!shouldRenderItem(item)) return null;
 
             return (
               <Link
@@ -229,9 +257,6 @@ const Sidebar = ({ isOpen, onClose }) => {
               </Link>
             );
           })}
-
-          {/* Bas de la sidebar */}
-        
         </nav>
       </aside>
     </>

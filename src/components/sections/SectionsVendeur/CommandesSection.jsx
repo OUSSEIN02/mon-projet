@@ -6,6 +6,7 @@ import apiClient from '../../../services/apiClient';
 import OrderDetailsSection from '../details/OrderDetailsSection';
 import Loader from '../../../utils/Loader'; 
 import '../../css/CommandesSection.css';
+import {Link} from 'react-router-dom';
 
 const CommandesSection = () => {
   const { orderId } = useParams();
@@ -28,16 +29,20 @@ const CommandesSection = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get('/orders');
+      const response = await apiClient.get('/admin/orders');
       
       const formattedOrders = response.data.data.map(order => ({
         id: `CMD-${String(order.id).padStart(4, '0')}`,
+        livreurId: order.livreur?.id || null,
         rawId: order.id,
         client: order.dropoff_name || 'Client inconnu',
         vendeur: order.pickup_address
           ? order.pickup_address.replace(/^[A-Z0-9+]+\s*,\s*/, '')
           : 'Lieu inconnu',
-        livreur: order.livreur?.nom || 'Non assigné',
+        // 👇 CORRECTION ICI : accès au nom du livreur via user.name
+        livreur: order.livreur?.user?.name || 'Non assigné',
+        // Optionnel : ajouter le numéro de plaque pour plus d'info
+        livreurPlaque: order.livreur?.numero_plaque || '',
         statut: order.status,
         montant: order.total_amount > 0
           ? `${new Intl.NumberFormat('fr-FR').format(order.total_amount)} FCFA`
@@ -251,9 +256,19 @@ const CommandesSection = () => {
                     <td>{cmd.client}</td>
                     <td className="text-gray-600">{cmd.vendeur}</td>
                     <td>
-                      <span className={cmd.livreur === 'Non assigné' ? 'text-gray-400 italic' : 'text-gray-800'}>
-                        {cmd.livreur}
-                      </span>
+                        {cmd.livreur === 'Non assigné' ? (
+                          <span className="text-gray-400 italic">Non assigné</span>
+                        ) : (
+                          <div className="flex flex-col">
+                            <Link 
+                              to={`/dashboard/livreur/${cmd.livreurId}`}
+                              className="cmd-livreur-link"
+                            >
+                              {cmd.livreur}
+                            </Link>
+                          
+                          </div>
+                        )}
                     </td>
                     <td>
                       <span className={`cmd-badge ${getBadgeClass(cmd.statut)}`}>

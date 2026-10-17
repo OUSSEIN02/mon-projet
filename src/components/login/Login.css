@@ -347,7 +347,7 @@
     text-decoration: underline;
   }
   
-  .btn-submit {
+  .btn-submit2 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -365,11 +365,11 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   
-  .btn-submit:hover:not(:disabled) {
+  .btn-submit2:hover:not(:disabled) {
     box-shadow: 0 14px 28px -8px rgba(240, 90, 0, 0.65);
   }
   
-  .btn-submit:disabled {
+  .btn-submit2:disabled {
     opacity: 0.75;
     cursor: not-allowed;
   }

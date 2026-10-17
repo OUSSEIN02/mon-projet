@@ -24,9 +24,8 @@ const ProfilSection = () => {
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [isLoadingPassword, setIsLoadingPassword] = useState(false);
 
-  // États pour la modale de confirmation
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null); // 'profile' ou 'password'
+  const [pendingAction, setPendingAction] = useState(null);
 
   // --- 1. CHARGEMENT INITIAL ---
   useEffect(() => {
@@ -36,6 +35,10 @@ const ProfilSection = () => {
         const response = await apiClient.get('/user/profile');
         const userData = response.data.data;
         const vendeurData = userData.vendeur || {};
+
+        // DÉTECTION INFALLIBLE DU VENDEUR
+        const role = (userData.role || '').toLowerCase();
+        const isSeller = !!userData.vendeur || role === 'vendeur' || role === 'seller';
 
         setProfile({
           name: userData.name || '',
@@ -49,7 +52,7 @@ const ProfilSection = () => {
           created_at: userData.created_at,
           is_verified: userData.is_verified || userData.email_verified_at,
           avatar: userData.avatar,
-          _isSeller: !!userData.vendeur 
+          _isSeller: isSeller 
         });
       } catch (err) {
         console.error("Erreur chargement profil:", err);
@@ -156,9 +159,7 @@ const ProfilSection = () => {
       } finally {
         setIsLoadingProfile(false);
       }
-    } 
-    
-    else if (pendingAction === 'password') {
+    } else if (pendingAction === 'password') {
       setIsLoadingPassword(true);
       try {
         await apiClient.put('/user/password', {
@@ -179,7 +180,6 @@ const ProfilSection = () => {
         setIsLoadingPassword(false);
       }
     }
-    
     setPendingAction(null);
   };
 
@@ -203,7 +203,7 @@ const ProfilSection = () => {
   const strength = getPasswordStrength(passwords.new);
 
   if (initialLoading || !profile) {
-    return <Loader text="Chargement de votre profil..." fullScreen={true} size="lg" />;
+    return <Loader text="Chargement de votre profil..." fullScreen={false} size="lg" />;
   }
 
   return (
@@ -217,7 +217,6 @@ const ProfilSection = () => {
 
       <div className="pr-grid">
         <div className="pr-main-col">
-          {/* 1. Formulaire Profil */}
           <form onSubmit={requestProfileUpdate}>
             <div className="pr-card">
               <div className="pr-card-header">
@@ -233,54 +232,73 @@ const ProfilSection = () => {
                   {errors.name && <p className="pr-error-text">{errors.name}</p>}
                 </div>
 
-                {profile._isSeller && (
+                
+
+                {/* ========================================================= */}
+                {/* CHAMP EMAIL VERROUILLÉ POUR LES VENDEURS */}
+                {/* ========================================================= */}
+                {profile._isSeller ? (
                   <div className="pr-form-group">
-                    <label className="pr-form-label">Raison sociale / Nom commercial</label>
+                    <label className="pr-form-label">
+                      Adresse email <span className="pr-required">*</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#dc2626', background: '#fef2f2', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px', border: '1px solid #fecaca' }}>
+                        <Lock size={12} /> VERROUILLÉ
+                      </span>
+                    </label>
                     <div className="pr-password-wrapper">
-                      <Building size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                      <input type="text" name="company_name" value={profile.company_name} onChange={handleProfileChange} className="pr-form-input" style={{ paddingLeft: '40px' }} placeholder="Nom commercial" />
+                      <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', zIndex: 1 }} />
+                      <div style={{ width: '100%', paddingLeft: '40px', height: '38px', display: 'flex', alignItems: 'center', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#64748b', fontSize: '14px', fontWeight: '500', cursor: 'not-allowed', userSelect: 'none' }}>
+                        {profile.email || 'Non défini'}
+                      </div>
                     </div>
+                    <p style={{ fontSize: '13px', color: '#dc2626', marginTop: '6px', display: 'flex', alignItems: 'center', lineHeight: '1.4', fontWeight: '500' }}>
+                      <AlertTriangle size={14} style={{ marginRight: '6px', flexShrink: 0 }} />
+                      L'adresse email est verrouillée pour les comptes vendeurs.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="pr-form-group">
+                    <label className="pr-form-label">Adresse email <span className="pr-required">*</span></label>
+                    <div className="pr-password-wrapper">
+                      <Mail size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                      <input type="email" name="email" value={profile.email} onChange={handleProfileChange} className={`pr-form-input ${errors.email ? 'pr-input-error' : ''}`} style={{ paddingLeft: '40px' }} />
+                    </div>
+                    {errors.email && <p className="pr-error-text">{errors.email}</p>}
                   </div>
                 )}
 
-                <div className="pr-form-group">
-                  <label className="pr-form-label">Adresse email <span className="pr-required">*</span></label>
-                  <div className="pr-password-wrapper">
-                    <Mail size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                    <input type="email" name="email" value={profile.email} onChange={handleProfileChange} className={`pr-form-input ${errors.email ? 'pr-input-error' : ''}`} style={{ paddingLeft: '40px' }} />
-                  </div>
-                  {errors.email && <p className="pr-error-text">{errors.email}</p>}
-                </div>
-
-                <div className="pr-form-group">
-                  <label className="pr-form-label">Numéro de téléphone</label>
-                  <div className="pr-password-wrapper">
-                    <Phone size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                    <input type="tel" name="phone" value={profile.phone} onChange={handleProfileChange} className="pr-form-input" style={{ paddingLeft: '40px' }} placeholder="+241 XX XX XX XX" />
-                  </div>
-                </div>
-
-                {profile._isSeller && (
-                  <>
-                    <div className="pr-form-group">
-                      <label className="pr-form-label">Adresse physique</label>
-                      <div className="pr-password-wrapper">
-                        <MapPin size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-                        <input type="text" name="address" value={profile.address} onChange={handleProfileChange} className="pr-form-input" style={{ paddingLeft: '40px' }} placeholder="Quartier, rue, bâtiment..." />
+                {/* ========================================================= */}
+                {/* CHAMP TÉLÉPHONE VERROUILLÉ POUR LES VENDEURS (NOUVEAU) */}
+                {/* ========================================================= */}
+                {profile._isSeller ? (
+                  <div className="pr-form-group">
+                    <label className="pr-form-label">
+                      Numéro de téléphone
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '700', color: '#dc2626', background: '#fef2f2', padding: '2px 8px', borderRadius: '4px', marginLeft: '8px', border: '1px solid #fecaca' }}>
+                        <Lock size={12} /> VERROUILLÉ
+                      </span>
+                    </label>
+                    <div className="pr-password-wrapper">
+                      <Phone size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', zIndex: 1 }} />
+                      <div style={{ width: '100%', paddingLeft: '40px', height: '38px', display: 'flex', alignItems: 'center', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', color: '#64748b', fontSize: '14px', fontWeight: '500', cursor: 'not-allowed', userSelect: 'none' }}>
+                        {profile.phone || 'Non défini'}
                       </div>
                     </div>
-                    <div className="pr-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <div className="pr-form-group">
-                        <label className="pr-form-label">Ville</label>
-                        <input type="text" name="city" value={profile.city} onChange={handleProfileChange} className="pr-form-input" placeholder="Ville" />
-                      </div>
-                      <div className="pr-form-group">
-                        <label className="pr-form-label">Pays</label>
-                        <input type="text" name="country" value={profile.country} onChange={handleProfileChange} className="pr-form-input" placeholder="Pays" />
-                      </div>
+                    <p style={{ fontSize: '13px', color: '#dc2626', marginTop: '6px', display: 'flex', alignItems: 'center', lineHeight: '1.4', fontWeight: '500' }}>
+                      <AlertTriangle size={14} style={{ marginRight: '6px', flexShrink: 0 }} />
+                      Le numéro de téléphone est verrouillé pour les comptes vendeurs.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="pr-form-group">
+                    <label className="pr-form-label">Numéro de téléphone</label>
+                    <div className="pr-password-wrapper">
+                      <Phone size={18} className="pr-input-icon" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                      <input type="tel" name="phone" value={profile.phone} onChange={handleProfileChange} className="pr-form-input" style={{ paddingLeft: '40px' }} placeholder="+241 XX XX XX XX" />
                     </div>
-                  </>
+                  </div>
                 )}
+               
 
                 <div className="pr-form-actions">
                   <button type="submit" disabled={isLoadingProfile} className="pr-btn pr-btn-primary">
@@ -291,7 +309,6 @@ const ProfilSection = () => {
             </div>
           </form>
 
-          {/* 2. Formulaire Mot de passe */}
           <form onSubmit={requestPasswordUpdate}>
              <div className="pr-card">
               <div className="pr-card-header">
@@ -342,7 +359,6 @@ const ProfilSection = () => {
           </form>
         </div>
 
-        {/* === COLONNE LATÉRALE === */}
         <div className="pr-sidebar-col">
           <div className="pr-card">
             <div className="pr-card-header"><h3 className="pr-card-title">Informations du compte</h3></div>
@@ -402,7 +418,6 @@ const ProfilSection = () => {
         </div>
       </div>
 
-      {/* === MODALE DE CONFIRMATION === */}
       <AnimatePresence>
         {showConfirmModal && (
           <motion.div 
@@ -421,7 +436,7 @@ const ProfilSection = () => {
             >
               <div className="pr-modal-header">
                 <div className="pr-modal-icon-wrapper">
-                  <AlertTriangle size={24} className="text-orange-500" />
+                  <AlertTriangle size={24} style={{ color: '#f97316' }} />
                 </div>
                 <h3>Confirmation requise</h3>
               </div>
@@ -433,15 +448,9 @@ const ProfilSection = () => {
                 </p>
               </div>
               <div className="pr-modal-footer">
-                <button onClick={() => setShowConfirmModal(false)} className="pr-btn pr-btn-secondary">
-                  Annuler
-                </button>
+                <button onClick={() => setShowConfirmModal(false)} className="pr-btn pr-btn-secondary">Annuler</button>
                 <button onClick={executeAction} className="pr-btn pr-btn-primary">
-                  {isLoadingProfile || isLoadingPassword ? (
-                    <span className="pr-spinner-small"></span>
-                  ) : (
-                    "Confirmer"
-                  )}
+                  {isLoadingProfile || isLoadingPassword ? <span className="pr-spinner-small"></span> : "Confirmer"}
                 </button>
               </div>
             </motion.div>

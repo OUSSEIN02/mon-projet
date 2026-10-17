@@ -26,6 +26,7 @@ export default function CreateSellerSection({ onSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -111,11 +112,47 @@ export default function CreateSellerSection({ onSuccess }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // --- NAVIGATION ---
-  const nextStep = () => {
-    if (currentStep === 1 && validateStep1()) setCurrentStep(2);
-    else if (currentStep === 2 && validateStep2()) setCurrentStep(3);
-  };
+  
+    // --- NAVIGATION ---
+    const nextStep = async () => {
+      if (currentStep === 1) {
+        // 1. Validation de base (format, cases cochées)
+        if (!validateStep1()) return;
+  
+        // 2. Vérification auprès de la base de données
+        setIsCheckingEmail(true);
+        try {
+          // Adaptez cette route selon votre API backend (ex: GET /api/sellers/check-email?email=...)
+          const response = await apiClient.get('/sellers/check-email', {
+            params: { email: formData.email }
+          });
+          
+          // Supposons que votre backend renvoie { exists: true } ou { available: false }
+          if (response.data.exists) {
+            setErrors(prev => ({ 
+              ...prev, 
+              email: 'Cet email est déjà utilisé par un autre vendeur.' 
+            }));
+            toast.error('Cet email est déjà associé à un compte existant.');
+            return; // On arrête ici, on ne passe pas à l'étape 2
+          }
+          
+          // 3. Si l'email est disponible, on passe à l'étape suivante
+          setCurrentStep(2);
+          setErrors({}); // Nettoyer les erreurs au changement d'étape
+          
+        } catch (error) {
+          console.error("Erreur lors de la vérification de l'email:", error);
+          toast.error('Impossible de vérifier l\'email. Veuillez réessayer.');
+        } finally {
+          setIsCheckingEmail(false);
+        }
+  
+      } else if (currentStep === 2 && validateStep2()) {
+        setCurrentStep(3);
+        setErrors({});
+      }
+    };
 
   const prevStep = () => {
     if (currentStep > 1) {
@@ -266,12 +303,29 @@ export default function CreateSellerSection({ onSuccess }) {
                 </div>
 
                 <div className="cs-step-actions">
-                  {/* ✅ MODIFICATION ICI : Utilisation de handleCancel pour rediriger */}
-                  <button type="button" className="cs-btn-cancel" onClick={handleCancel}>
+                  <button 
+                    type="button" 
+                    className="cs-btn-cancel" 
+                    onClick={handleCancel}
+                    disabled={isCheckingEmail}
+                  >
                     <ArrowLeft size={16} /> Annuler
                   </button>
-                  <button type="button" className="cs-btn-continue" onClick={nextStep}>
-                    Continuer <ArrowRight size={18} />
+                  
+                  <button 
+                    type="button" 
+                    className="cs-btn-continue" 
+                    onClick={nextStep}
+                    disabled={isCheckingEmail} // Désactive le bouton pendant la vérification
+                  >
+                    {isCheckingEmail ? (
+                      <span className="flex items-center gap-2">
+                        {/* Si votre composant Loader le permet, sinon un simple texte suffit */}
+                        <span className="animate-spin">⏳</span> Vérification...
+                      </span>
+                    ) : (
+                      <>Continuer <ArrowRight size={18} /></>
+                    )}
                   </button>
                 </div>
               </motion.div>

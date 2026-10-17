@@ -1,0 +1,1032 @@
+/* ═══════════════════════════════════════════════════════════
+   NOUVELLE COMMANDE - STYLES COMPLÈTES
+   Préfixe : nc-
+   ═══════════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────────────
+   1. VARIABLES ET RESET LOCAL
+   ─────────────────────────────────────────────────────────── */
+   :root {
+    --nc-orange: #f97316;
+    --nc-orange-dark: #ea580c;
+    --nc-orange-light: #fed7aa;
+    --nc-orange-bg: rgba(249, 115, 22, 0.08);
+    --nc-orange-border: rgba(249, 115, 22, 0.25);
+    
+    --nc-black: #0f172a;
+    --nc-gray-900: #111827;
+    --nc-gray-700: #374151;
+    --nc-gray-600: #4b5563;
+    --nc-gray-500: #6b7280;
+    --nc-gray-400: #9ca3af;
+    --nc-gray-300: #d1d5db;
+    --nc-gray-200: #e5e7eb;
+    --nc-gray-100: #f3f4f6;
+    --nc-gray-50: #f9fafb;
+    
+    --nc-red: #ef4444;
+    --nc-red-bg: #fef2f2;
+    --nc-green: #22c55e;
+    --nc-green-bg: #f0fdf4;
+    --nc-amber: #f59e0b;
+    --nc-amber-bg: #fffbeb;
+    
+    --nc-radius-sm: 6px;
+    --nc-radius-md: 10px;
+    --nc-radius-lg: 14px;
+    --nc-radius-xl: 20px;
+    
+    --nc-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --nc-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --nc-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --nc-shadow-orange: 0 6px 14px rgba(249, 115, 22, 0.25);
+    
+    --nc-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     2. LAYOUT GÉNÉRAL
+     ─────────────────────────────────────────────────────────── */
+  .nc-page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    
+    color: var(--nc-black);
+  }
+  
+  .nc-header {
+    margin-bottom: 28px;
+    padding: 24px 28px;
+    background: linear-gradient(135deg, var(--nc-orange) 0%, var(--nc-orange-dark) 100%);
+    border-radius: var(--nc-radius-xl);
+    color: white;
+    box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .nc-header-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    flex-shrink: 0;
+    color: white;
+  }
+  
+  .nc-header h2 {
+    margin: 0 0 4px 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  
+  .nc-subtitle {
+    margin: 0;
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  
+  .nc-form-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     3. CARTES (form-card)
+     ─────────────────────────────────────────────────────────── */
+  .nc-card {
+    background: white;
+    border: 1px solid var(--nc-gray-200);
+    border-radius: var(--nc-radius-xl);
+    padding: 24px;
+    box-shadow: var(--nc-shadow-md);
+    transition: var(--nc-transition);
+  }
+  
+  .nc-card:hover {
+    box-shadow: var(--nc-shadow-lg);
+  }
+  
+  .nc-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--nc-gray-100);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--nc-black);
+  }
+  
+  .nc-card-title svg {
+    color: var(--nc-orange);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     4. GRIDS
+     ─────────────────────────────────────────────────────────── */
+  .nc-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .nc-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  @media (min-width: 768px) {
+    .nc-grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+    .nc-grid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     5. CHAMPS DE FORMULAIRE
+     ─────────────────────────────────────────────────────────── */
+  .nc-field {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .nc-field > label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--nc-gray-700);
+  }
+  
+  .nc-field label .nc-required {
+    color: var(--nc-red);
+    margin-left: 2px;
+  }
+  
+  .nc-field input[type="text"],
+  .nc-field input[type="tel"],
+  .nc-field input[type="email"],
+  .nc-field input[type="number"],
+  .nc-field input[type="datetime-local"],
+  .nc-field textarea,
+  .nc-field select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--nc-gray-900);
+    background: var(--nc-gray-50);
+    border: 1.5px solid var(--nc-gray-200);
+    border-radius: var(--nc-radius-md);
+    outline: none;
+    transition: var(--nc-transition);
+    font-family: inherit;
+  }
+  
+  .nc-field input:focus,
+  .nc-field textarea:focus,
+  .nc-field select:focus {
+    background: white;
+    border-color: var(--nc-orange);
+    box-shadow: 0 0 0 3px var(--nc-orange-bg);
+  }
+  
+  .nc-field input::placeholder,
+  .nc-field textarea::placeholder {
+    color: var(--nc-gray-400);
+  }
+  
+  .nc-field textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+  
+  .nc-field-label-sm {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--nc-gray-600);
+  }
+  
+  .nc-field-label-sm svg {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  
+  .nc-input-error {
+    border-color: var(--nc-red) !important;
+    background: var(--nc-red-bg) !important;
+  }
+  
+  .nc-error-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--nc-red);
+    font-weight: 500;
+  }
+  
+  .nc-error-text::before {
+    content: "⚠";
+    font-size: 11px;
+  }
+  
+  .nc-help-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--nc-gray-500);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     6. BOUTON CARTE (picker sur map)
+     ─────────────────────────────────────────────────────────── */
+  .nc-map-picker-btn {
+    margin-top: 2px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1.5px solid var(--nc-gray-300);
+    border-radius: var(--nc-radius-md);
+    color: var(--nc-gray-700);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--nc-transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  .nc-map-picker-btn:hover {
+    background: var(--nc-gray-50);
+    border-color: var(--nc-orange);
+    color: var(--nc-orange);
+  }
+  
+  .nc-map-picker-btn svg {
+    color: var(--nc-orange);
+  }
+  
+  .nc-address-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 8px;
+  }
+  
+  .nc-address-row .nc-address-input {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     7. BADGE GÉOLOCALISATION
+     ─────────────────────────────────────────────────────────── */
+  .nc-geo-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--nc-green);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     8. BADGE DE DISTANCE
+     ─────────────────────────────────────────────────────────── */
+  .nc-distance-badge {
+    margin-top: 24px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--nc-orange-bg);
+    border: 1.5px solid var(--nc-orange-border);
+    border-radius: var(--nc-radius-lg);
+    transition: var(--nc-transition);
+  }
+  
+  .nc-distance-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(249, 115, 22, 0.15);
+    border-radius: 50%;
+    color: var(--nc-orange);
+    flex-shrink: 0;
+  }
+  
+  .nc-distance-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--nc-black);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     9. UPLOAD DE FICHIERS
+     ─────────────────────────────────────────────────────────── */
+  .nc-file-wrap {
+    position: relative;
+  }
+  
+  .nc-file-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .nc-file-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 28px 16px;
+    background: var(--nc-gray-50);
+    border: 2px dashed var(--nc-gray-300);
+    border-radius: var(--nc-radius-lg);
+    color: var(--nc-gray-500);
+    cursor: pointer;
+    transition: var(--nc-transition);
+    text-align: center;
+    min-height: 120px;
+  }
+  
+  .nc-file-label:hover {
+    border-color: var(--nc-orange);
+    background: var(--nc-orange-bg);
+    color: var(--nc-orange);
+  }
+  
+  .nc-file-label svg {
+    color: var(--nc-orange);
+  }
+  
+  .nc-file-label span {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  .nc-file-label.nc-file-error {
+    border-color: var(--nc-red);
+    background: var(--nc-red-bg);
+  }
+  
+  .nc-img-preview {
+    position: relative;
+    display: inline-block;
+    margin-top: 16px;
+    max-width: 220px;
+  }
+  
+  .nc-img-preview img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--nc-radius-md);
+    border: 1px solid var(--nc-gray-200);
+  }
+  
+  .nc-img-preview-remove {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--nc-red);
+    color: white;
+    border: 2.5px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--nc-transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .nc-img-preview-remove:hover {
+    transform: scale(1.1);
+    background: #dc2626;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     10. CHECKBOX PERSONNALISÉ
+     ─────────────────────────────────────────────────────────── */
+  .nc-checkbox-wrap {
+    display: flex;
+    align-items: stretch;
+  }
+  
+  .nc-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--nc-gray-50);
+    border: 1.5px solid var(--nc-gray-200);
+    border-radius: var(--nc-radius-md);
+    cursor: pointer;
+    transition: var(--nc-transition);
+    user-select: none;
+    width: 100%;
+  }
+  
+  .nc-checkbox-label:hover {
+    background: var(--nc-amber-bg);
+    border-color: var(--nc-amber);
+  }
+  
+  .nc-checkbox-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .nc-checkmark {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: 2px solid var(--nc-gray-300);
+    border-radius: 5px;
+    position: relative;
+    transition: var(--nc-transition);
+    background: white;
+  }
+  
+  .nc-checkbox-label input:checked ~ .nc-checkmark {
+    background: var(--nc-orange);
+    border-color: var(--nc-orange);
+  }
+  
+  .nc-checkbox-label input:checked ~ .nc-checkmark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  
+  .nc-fragile-icon {
+    color: var(--nc-amber);
+    flex-shrink: 0;
+  }
+  
+  .nc-checkbox-label span:not(.nc-checkmark) {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--nc-gray-700);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     11. RADIO BUTTONS
+     ─────────────────────────────────────────────────────────── */
+  .nc-radio-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  
+  .nc-radio-label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    background: var(--nc-gray-50);
+    border: 1.5px solid var(--nc-gray-200);
+    border-radius: var(--nc-radius-md);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--nc-gray-700);
+    transition: var(--nc-transition);
+    position: relative;
+  }
+  
+  .nc-radio-label:hover {
+    border-color: var(--nc-orange-border);
+    background: var(--nc-orange-bg);
+  }
+  
+  .nc-radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .nc-radio-label input:checked + .nc-radio-custom {
+    background: var(--nc-orange);
+    border-color: var(--nc-orange);
+  }
+  
+  .nc-radio-label input:checked + .nc-radio-custom::after {
+    transform: scale(1);
+  }
+  
+  .nc-radio-label input:checked ~ span:last-child {
+    color: var(--nc-orange);
+    font-weight: 700;
+  }
+  
+  .nc-radio-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--nc-gray-300);
+    border-radius: 50%;
+    position: relative;
+    transition: var(--nc-transition);
+    flex-shrink: 0;
+  }
+  
+  .nc-radio-custom::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: var(--nc-transition);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     12. BOUTONS ET ACTIONS
+     ─────────────────────────────────────────────────────────── */
+  .nc-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 24px;
+    background: white;
+    border-top: 1px solid var(--nc-gray-100);
+    margin-top: 12px;
+    border-radius: var(--nc-radius-lg);
+    box-shadow: var(--nc-shadow-md);
+    position: sticky;
+    bottom: 16px;
+    z-index: 10;
+  }
+  
+  .nc-btn-primary,
+  .nc-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--nc-radius-md);
+    cursor: pointer;
+    transition: var(--nc-transition);
+    border: 1.5px solid transparent;
+    min-width: 160px;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  
+  .nc-btn-primary {
+    background: linear-gradient(135deg, var(--nc-orange) 0%, var(--nc-orange-dark) 100%);
+    color: white;
+    box-shadow: var(--nc-shadow-orange);
+  }
+  
+  .nc-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.4);
+  }
+  
+  .nc-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  .nc-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  .nc-btn-secondary {
+    background: white;
+    color: var(--nc-gray-700);
+    border-color: var(--nc-gray-300);
+  }
+  
+  .nc-btn-secondary:hover:not(:disabled) {
+    background: var(--nc-gray-50);
+    border-color: var(--nc-gray-400);
+  }
+  
+  .nc-btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     13. ÉCRAN DE RÉCAPITULATIF (SUMMARY)
+     ─────────────────────────────────────────────────────────── */
+  .nc-back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--nc-gray-100);
+    border: none;
+    border-radius: 50%;
+    color: var(--nc-gray-700);
+    cursor: pointer;
+    transition: var(--nc-transition);
+    flex-shrink: 0;
+  }
+  
+  .nc-back-btn:hover {
+    background: var(--nc-gray-200);
+    color: var(--nc-black);
+  }
+  
+  .nc-summary-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  
+  .nc-summary-icon {
+    color: var(--nc-gray-400);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  .nc-summary-content {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .nc-summary-label {
+    font-size: 12px;
+    color: var(--nc-gray-500);
+    margin-bottom: 2px;
+  }
+  
+  .nc-summary-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--nc-black);
+    word-break: break-word;
+    line-height: 1.4;
+  }
+  
+  .nc-divider {
+    height: 1px;
+    background: var(--nc-gray-200);
+    margin: 16px 0;
+  }
+  
+  .nc-highlight-box {
+    margin-top: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--nc-orange-bg);
+    border-radius: var(--nc-radius-md);
+    color: var(--nc-orange);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     14. TARIFICATION (PRICE ROWS)
+     ─────────────────────────────────────────────────────────── */
+  .nc-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  
+  .nc-price-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--nc-gray-600);
+  }
+  
+  .nc-price-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--nc-black);
+  }
+  
+  .nc-price-row.nc-price-total {
+    padding: 12px 0 4px;
+  }
+  
+  .nc-price-row.nc-price-total .nc-price-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--nc-orange);
+  }
+  
+  .nc-price-row.nc-price-total .nc-price-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--nc-orange);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     15. LOADER ET ÉTATS VIDES
+     ─────────────────────────────────────────────────────────── */
+  .nc-empty-state {
+    text-align: center;
+    padding: 60px 24px;
+  }
+  
+  .nc-empty-state svg {
+    color: var(--nc-gray-300);
+    margin-bottom: 16px;
+  }
+  
+  .nc-empty-state p {
+    color: var(--nc-gray-600);
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .nc-empty-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  
+  .nc-loader-wrap {
+    text-align: center;
+    padding: 60px 24px;
+  }
+  
+  .nc-loader-wrap svg {
+    color: var(--nc-orange);
+    margin-bottom: 16px;
+  }
+  
+  .nc-loader-wrap p {
+    color: var(--nc-gray-600);
+    margin: 0;
+  }
+  
+  /* Animation de spin pour Loader2 */
+  @keyframes nc-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .animate-spin {
+    animation: nc-spin 1s linear infinite;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     16. RESPONSIVE
+     ─────────────────────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .nc-page-container {
+      padding: 16px 12px 80px;
+    }
+    
+    .nc-header {
+      padding: 20px;
+    }
+    
+    .nc-header h2 {
+      font-size: 18px;
+    }
+    
+    .nc-card {
+      padding: 18px;
+    }
+    
+    .nc-card-title {
+      font-size: 14px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+    }
+    
+    .nc-actions {
+      flex-direction: column-reverse;
+      padding: 16px;
+    }
+    
+    .nc-btn-primary,
+    .nc-btn-secondary {
+      width: 100%;
+      min-width: unset;
+    }
+    
+    .nc-radio-group {
+      flex-direction: column;
+    }
+    
+    .nc-address-row {
+      flex-direction: column;
+    }
+    
+    .nc-map-picker-btn {
+      width: 100%;
+      justify-content: center;
+      margin-top: 8px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nc-header-icon {
+      width: 44px;
+      height: 44px;
+    }
+    
+    .nc-price-row.nc-price-total .nc-price-value {
+      font-size: 18px;
+    }
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     17. UTILITAIRES DIVERS
+     ─────────────────────────────────────────────────────────── */
+  .nc-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nc-flex-gap-sm {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .nc-mt-2 { margin-top: 8px; }
+  .nc-mt-3 { margin-top: 12px; }
+  .nc-mt-4 { margin-top: 16px; }
+  .nc-mt-6 { margin-top: 24px; }
+
+
+  .nc-phone-input-group {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+}
+
+.nc-country-select {
+    flex: 0 0 125px;
+    width: 125px !important;
+    min-width: 125px;
+    max-width: 125px;
+
+    padding: 10px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #f9fafb;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.nc-phone-input-group input {
+    flex: 1 1 0;
+    width: 0 !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* 📱 Mobile */
+@media (max-width: 576px) {
+    .nc-phone-input-group {
+        gap: 6px;
+    }
+
+    .nc-country-select {
+        flex: 0 0 90px;
+        width: 90px !important;
+        min-width: 90px;
+        max-width: 90px;
+        padding: 10px 5px;
+        font-size: 12px;
+    }
+
+    .nc-phone-input-group input {
+        flex: 1 1 0;
+        width: 0 !important;
+        min-width: 0;
+        font-size: 14px;
+    }
+}
+
+/* --- NOUVEAUX STYLES POUR LE RÉCAPITULATIF FINANCIER --- */
+.nc-pricing-section {
+  margin-bottom: 8px;
+}
+
+.nc-pricing-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nc-text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nc-info-title {
+  color: #2563eb; /* Bleu pour l'info */
+}
+
+.nc-pricing-divider {
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--nc-border, #e2e8f0) 0,
+    var(--nc-border, #e2e8f0) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  margin: 20px 0;
+}
+
+.nc-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--nc-text, #0f172a);
+}
+
+.nc-price-row.nc-price-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--nc-primary, #f97316);
+  padding-top: 12px;
+}
+
+.nc-price-row.nc-price-declared {
+  background: #eff6ff; /* Fond bleu très clair */
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbeafe;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.nc-price-row.nc-price-declared .nc-price-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.nc-pricing-note {
+  font-size: 12px;
+  color: var(--nc-text-muted, #64748b);
+  margin-top: 10px;
+  line-height: 1.4;
+  font-style: italic;
+}

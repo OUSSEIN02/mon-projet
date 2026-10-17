@@ -9,22 +9,9 @@ import {
 import apiClient from '../../../services/apiClient';
 import Loader from '../../../utils/Loader';
 
-// 1. CRÉATION D'UN DICTIONNAIRE D'ICÔNES
-// Cela permet de convertir la chaîne de caractères venant du backend 
-// en vrai composant React (PascalCase)
 const iconMap = {
-  ShoppingCart: ShoppingCart,
-  Users: Users,
-  Truck: Truck,
-  DollarSign: DollarSign,
-  Star: Star,
-  Clock: Clock,
-  Target: Target,
-  Award: Award,
-  Zap: Zap,
-  MapPin: MapPin,
-  Activity: Activity,
-  PieChart: PieChart
+  ShoppingCart: ShoppingCart, Users: Users, Truck: Truck, DollarSign: DollarSign,
+  Star: Star, Clock: Clock, Target: Target, Award: Award, Zap: Zap, MapPin: MapPin, Activity: Activity, PieChart: PieChart
 };
 
 const StatistiquesSection = () => {
@@ -39,9 +26,7 @@ const StatistiquesSection = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get('/dashboard/statistiques', {
-          params: { period: period }
-        });
+        const response = await apiClient.get('/dashboard/statistiques', { params: { period: period } });
         setStatsData(response.data.data);
       } catch (err) {
         console.error("Erreur chargement statistiques:", err);
@@ -53,7 +38,6 @@ const StatistiquesSection = () => {
     fetchStats();
   }, [period]);
 
-  // Données de secours
   const chartData = statsData?.chart_data || { labels: [], commandes: [], revenus: [] };
   const pieData = statsData?.pie_data || [];
   const performanceStats = statsData?.performance_stats || [];
@@ -61,10 +45,17 @@ const StatistiquesSection = () => {
   const topLivreurs = statsData?.top_livreurs || [];
   const extraStats = statsData?.extra_stats || [];
 
-  // 2. CORRECTION DU NAN : Valeur par défaut à 1 si le tableau est vide
-  const maxValue = chartData.commandes && chartData.commandes.length > 0 
-    ? Math.max(...chartData.commandes) 
+  // 🟢 CORRECTION : Utiliser les revenus pour l'échelle du graphique, fallback à 1
+  const maxValue = chartData.revenus && chartData.revenus.length > 0 
+    ? Math.max(...chartData.revenus) 
     : 1;
+
+  // 🟢 FONCTION HELPER : Formater les grands chiffres pour le graphique (ex: 15000 -> "15k")
+  const formatChartValue = (value) => {
+    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+    if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+    return value.toString();
+  };
 
   const getPeriodLabel = () => {
     const labels = { semaine: 'Cette semaine', mois: 'Ce mois', annee: 'Cette année' };
@@ -83,11 +74,11 @@ const StatistiquesSection = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="section-container">
-      {/* Header avec filtres (inchangé) */}
+      {/* Header avec filtres */}
       <div className="section-header1">
         <div>
           <h2>Statistiques</h2>
-          <p className="section-subtitle1">Analyse détaillée des performances de la plateforme</p>
+          <p className="section-subtitle1">Analyse détaillée des performances et revenus de la plateforme</p>
         </div>
         <div className="section-actions1">
           <div className="period-selector" style={{ position: 'relative', marginRight: '12px' }}>
@@ -124,15 +115,12 @@ const StatistiquesSection = () => {
       {/* Statistiques globales */}
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
         {performanceStats.map((stat, index) => {
-          // 3. RÉCUPÉRATION SÉCURISÉE DU COMPOSANT ICÔNE
-          const IconComponent = iconMap[stat.icon] || ShoppingCart;
-          
+          const IconComponent = iconMap[stat.icon] || DollarSign;
           return (
             <motion.div key={index} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.05 }}
               className="stat-card" style={{ background: 'white', borderRadius: '12px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #f1f5f9' }}>
               <div className="stat-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div className={`stat-icon ${stat.up ? 'stat-icon-green' : 'stat-icon-red'}`} style={{ padding: '8px', borderRadius: '8px', background: stat.up ? '#dcfce7' : '#fee2e2', color: stat.up ? '#16a34a' : '#dc2626' }}>
-                  {/* Utilisation du composant résolu */}
                   <IconComponent size={17} />
                 </div>
                 <span style={{ fontSize: '12px', color: '#94a3b8' }}>{stat.label}</span>
@@ -151,25 +139,26 @@ const StatistiquesSection = () => {
 
       {/* Graphiques principaux */}
       <div className="panels-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-        {/* Graphique en barres */}
+        
+        {/* 🟢 Graphique en barres MODIFIÉ : Affiche maintenant les REVENUS de la plateforme */}
         <div className="panel" style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #f1f5f9' }}>
           <div className="panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}>Évolution des commandes</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}>Évolution des revenus (Part Admin)</h3>
             <div className="select-fake" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#64748b' }}>
-              <Activity size={14} />
+              <DollarSign size={14} />
               {period === 'semaine' ? 'Hebdomadaire' : period === 'mois' ? 'Mensuel' : 'Annuel'}
             </div>
           </div>
           <div className="chart-placeholder" style={{ minHeight: '250px' }}>
             {chartData.labels.length > 0 ? (
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', height: '200px', paddingTop: '20px' }}>
-                {chartData.commandes.map((value, index) => {
-                  const height = (value / maxValue) * 180; // Plus de NaN grâce au fallback de maxValue
-                  const isHighest = value === maxValue;
+                {chartData.revenus.map((value, index) => {
+                  const height = (value / maxValue) * 180;
+                  const isHighest = value === maxValue && value > 0;
                   return (
-                    <motion.div key={index} initial={{ height: 0 }} animate={{ height: height + 20 }} transition={{ duration: 0.8, delay: index * 0.05 }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <motion.div key={index} initial={{ height: 0 }} animate={{ height: Math.max(height, 20) }} transition={{ duration: 0.8, delay: index * 0.05 }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.05 + 0.3 }} style={{ fontSize: '11px', fontWeight: '600', color: isHighest ? '#2563eb' : '#64748b' }}>
-                        {value}
+                        {formatChartValue(value)}
                       </motion.div>
                       <div style={{ width: '100%', height: height, background: isHighest ? 'linear-gradient(180deg, #2563eb, #3b82f6)' : 'linear-gradient(180deg, #f59e0b, #f97316)', borderRadius: '6px 6px 0 0', opacity: isHighest ? 1 : 0.7, minHeight: '20px' }} />
                       <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '8px' }}>{chartData.labels[index]}</span>
@@ -228,9 +217,7 @@ const StatistiquesSection = () => {
       {extraStats.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           {extraStats.map((item, index) => {
-            // 3. RÉCUPÉRATION SÉCURISÉE DU COMPOSANT ICÔNE (bis)
             const ExtraIconComponent = iconMap[item.icon] || Target;
-            
             return (
               <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
@@ -239,7 +226,6 @@ const StatistiquesSection = () => {
                   <div style={{ fontSize: '12px', color: item.up ? '#16a34a' : '#dc2626' }}>{item.up ? '↑' : '↓'} {item.change}</div>
                 </div>
                 <div style={{ padding: '10px', borderRadius: '10px', background: '#f1f5f9', color: '#2563eb' }}>
-                  {/* Utilisation du composant résolu */}
                   <ExtraIconComponent size={20} />
                 </div>
               </motion.div>
@@ -248,12 +234,12 @@ const StatistiquesSection = () => {
         </div>
       )}
 
-      {/* Classements (Top Vendeurs & Top Livreurs) - Inchangé car pas d'icônes dynamiques ici */}
+      {/* Classements (Top Vendeurs & Top Livreurs) - Inchangé */}
       <div className="panels-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
         {/* Top Vendeurs */}
         <div className="panel" style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #f1f5f9' }}>
           <div className="panel-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}><Store size={20} /> Top Vendeurs</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}><Store size={20} /> Top Vendeurs (Par revenu généré)</h3>
           </div>
           <div className="perf-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {topVendeurs.length > 0 ? topVendeurs.map((vendeur, idx) => (

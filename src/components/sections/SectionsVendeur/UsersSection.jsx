@@ -282,8 +282,16 @@ const UsersSection = () => {
                   <div key={user.id} className="us-mobile-item">
                     <div className="us-mobile-header">
                       <div className="us-mobile-user">
-                        <div className="us-avatar">
-                          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      <div className="us-avatar us-avatar-sm">
+                            <img 
+                            src={user.avatarlivreur || user.avatarVendeur || defaultAvatar} 
+                            alt={user.name || 'Avatar'} 
+                            className="us-avatar-img"
+                            onError={(e) => {
+                                e.currentTarget.onerror = null; // Évite une boucle infinie si l'image par défaut échoue aussi
+                                e.currentTarget.src = defaultAvatar;
+                            }}
+                            />
                         </div>
                         <div className="us-mobile-info">
                           <div className="us-mobile-name">{user.name || 'Utilisateur'}</div>

@@ -176,7 +176,7 @@ const RoleCreateSection = () => {
         await apiClient.put(`/dashboard/roles/${roleId}`, payload);
         toast.success('Rôle mis à jour avec succès');
       } else {
-        await apiClient.post('/dashboard/users-roles-permissions', payload);
+        await apiClient.post('/dashboard/roles', payload);
         toast.success('Rôle créé avec succès');
       }
       

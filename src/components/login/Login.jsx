@@ -56,42 +56,70 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+ 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-  
+
     setIsLoading(true);
     setLoginError('');
-  
+
     try {
-      // 1. Appel vers l'endpoint de connexion
       const response = await apiClient.post('/login', {
         email: formData.email,
         password: formData.password,
       });
-  
+
       const { access_token, data: responseData } = response.data;
-  
-     
+
       if (access_token) {
+        // 🟢 Utilise les valeurs renvoyées directement par le backend si disponibles
+        const userRole = responseData.role || responseData.user?.roles?.[0]?.slug || 'user';
+        const accountStatus = responseData.account_status || 'en_attente';
+
+        const isLivreur = userRole === 'livreur' || responseData.user?.livreur;
+
+        if (isLivreur) {
+          navigate('/livreur-app');
+          return;
+        }
+
+        // 🟢 1. BLOQUER SI SUSPENDU OU REJETÉ
+        if (accountStatus === 'suspendu' || accountStatus === 'rejeté') {
+          setLoginError(`Votre compte a été ${accountStatus}. Veuillez contacter le support.`);
+          setIsLoading(false);
+          return; // On arrête tout, pas de redirection
+        }
+
+        // 🟢 2. REDIRIGER VERS LA PAGE D'ATTENTE SI EN ATTENTE
+        if (accountStatus === 'en_attente') {
+          localStorage.setItem('access_token', access_token);
+          localStorage.setItem('user', JSON.stringify(responseData.user));
+          localStorage.setItem('role', userRole);
+          navigate('/account-pending');
+          return; // On arrête tout
+        }
+
+        // 🟢 3. CONNEXION NORMALE SI 'valide'
+        const duration = formData.rememberMe 
+          ? (30 * 24 * 60 * 60 * 1000) 
+          : (24 * 60 * 60 * 1000);
+          
+        const expirationTime = Date.now() + duration;
+
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('user', JSON.stringify(responseData.user));
-  
-        const userRoles = responseData.user?.roles || [];
-        
-        const userRole = userRoles[0]?.slug || responseData.user?.role || 'user';
-        
         localStorage.setItem('role', userRole);
-  
+        localStorage.setItem('session_expires_at', expirationTime.toString());
+
         if (responseData.permissions) {
           localStorage.setItem('permissions', JSON.stringify(responseData.permissions));
         }
-  
-        // 3. Redirection
-        navigate('/dashboard'); 
+
+        navigate('/dashboard');
       }
     } catch (error) {
-      // 4. Gestion des erreurs HTTP
       if (error.response?.status === 401 || error.response?.status === 422) {
         setLoginError('Email ou mot de passe incorrect.');
       } else {
@@ -220,7 +248,7 @@ export default function Login() {
               type="submit"
               disabled={isLoading}
               whileTap={{ scale: 0.98 }}
-              className="btn-submit"
+              className="btn-submit2"
             >
               {isLoading ? (
                 <div className="spinner"></div>

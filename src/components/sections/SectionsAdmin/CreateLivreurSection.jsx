@@ -381,7 +381,7 @@ const CreateLivreurSection = ({ onGoBack, onSuccess }) => {
               {/* ✅ CORRECTION 3 : Valeurs alignées avec le backend Laravel */}
               <select name="status" value={formData.status} onChange={handleChange}>
                 <option value="en_attente">En attente de validation</option>
-                <option value="actif">Actif (Validé immédiatement)</option>
+                <option value="valide">Actif (Validé immédiatement)</option>
                 <option value="suspendu">Suspendu</option>
               </select>
             </div>

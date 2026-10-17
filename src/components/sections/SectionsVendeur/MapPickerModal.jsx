@@ -1,37 +1,60 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from '@react-google-maps/api';
-import { X, MapPin, Check, Loader2 } from 'lucide-react';
-
-// ⚠️ Remplacez par votre clé API (depuis vos variables d'environnement)
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "VOTRE_CLE_API";
+import { GoogleMap, Marker } from '@react-google-maps/api';
+import { X, MapPin, Check, Loader2, Search } from 'lucide-react';
+import { useGoogleMaps } from '../../../hooks/useGoogleMaps'; // ← Utiliser le hook centralisé
+import '../../css/MapPickerModal.css';
 
 const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: API_KEY,
-    libraries: ['places'],
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const [markerPosition, setMarkerPosition] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState('');
   const mapRef = useRef(null);
-  const autocompleteRef = useRef(null);
   const geocoderRef = useRef(null);
 
-  // Centre par défaut (Libreville, Gabon)
+  // --- Nouvelle Places API : état pour la recherche custom ---
+  const [searchInput, setSearchInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const sessionTokenRef = useRef(null);
+  const debounceRef = useRef(null);
+  const searchWrapperRef = useRef(null);
+
   const defaultCenter = { lat: 0.4162, lng: 9.4673 };
 
   useEffect(() => {
-    if (initialLat && initialLng) {
-      setMarkerPosition({ lat: initialLat, lng: initialLng });
-    } else {
-      setMarkerPosition(null);
+    if (isOpen) {
+      if (initialLat && initialLng) {
+        setMarkerPosition({ lat: initialLat, lng: initialLng });
+      } else {
+        setMarkerPosition(null);
+      }
+      setSelectedAddress('');
+      setSearchInput('');
+      setSuggestions([]);
+      setShowSuggestions(false);
     }
   }, [initialLat, initialLng, isOpen]);
 
+  // Ferme la liste de suggestions si on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
-    geocoderRef.current = new window.google.maps.Geocoder();
-    
+
+    if (window.google && window.google.maps) {
+      geocoderRef.current = new window.google.maps.Geocoder();
+    }
+
     if (markerPosition) {
       map.panTo(markerPosition);
       map.setZoom(15);
@@ -39,21 +62,23 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
       map.setZoom(13);
       map.panTo(defaultCenter);
     }
-  }, [markerPosition]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onMapClick = useCallback((e) => {
     const lat = e.latLng.lat();
     const lng = e.latLng.lng();
     const newPos = { lat, lng };
-    
+
     setMarkerPosition(newPos);
     setSelectedAddress('Récupération de l\'adresse...');
-    
-    // Géocodage inversé pour obtenir l'adresse à partir des coordonnées
+    setShowSuggestions(false);
+
     if (geocoderRef.current) {
       geocoderRef.current.geocode({ location: newPos }, (results, status) => {
         if (status === 'OK' && results[0]) {
           setSelectedAddress(results[0].formatted_address);
+          setSearchInput(results[0].formatted_address);
         } else {
           setSelectedAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
         }
@@ -61,26 +86,72 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
     }
   }, []);
 
-  const onAutocompleteLoad = useCallback((ref) => {
-    autocompleteRef.current = ref;
+  // --- Nouvelle Places API : recherche de suggestions (remplace Autocomplete) ---
+  const fetchSuggestions = useCallback(async (input) => {
+    if (!input || input.trim().length < 2 || !window.google?.maps?.places) {
+      setSuggestions([]);
+      return;
+    }
+
+    // Un session token regroupe les requêtes d'une même recherche pour la facturation Google
+    if (!sessionTokenRef.current) {
+      sessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken();
+    }
+
+    setIsSearching(true);
+    try {
+      const { suggestions: results } =
+        await window.google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input,
+          sessionToken: sessionTokenRef.current,
+          // Décommentez pour restreindre les résultats à un pays, ex. Bénin :
+          // includedRegionCodes: ['bj'],
+        });
+      setSuggestions(results || []);
+      setShowSuggestions(true);
+    } catch (err) {
+      console.error('Erreur autocomplete Places:', err);
+      setSuggestions([]);
+    } finally {
+      setIsSearching(false);
+    }
   }, []);
 
-  const onPlaceChanged = () => {
-    if (autocompleteRef.current) {
-      const place = autocompleteRef.current.getPlace();
-      if (place.geometry && place.geometry.location) {
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        const newPos = { lat, lng };
-        
-        setMarkerPosition(newPos);
-        setSelectedAddress(place.formatted_address);
-        
-        if (mapRef.current) {
-          mapRef.current.panTo(newPos);
-          mapRef.current.setZoom(15);
-        }
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300); // debounce pour limiter les appels API pendant la frappe
+  };
+
+  const handleSuggestionClick = async (suggestion) => {
+    try {
+      const place = suggestion.placePrediction.toPlace();
+      await place.fetchFields({ fields: ['location', 'formattedAddress', 'displayName'] });
+
+      const lat = place.location.lat();
+      const lng = place.location.lng();
+      const newPos = { lat, lng };
+      const address = place.formattedAddress || suggestion.placePrediction.text.text;
+
+      setMarkerPosition(newPos);
+      setSelectedAddress(address);
+      setSearchInput(address);
+      setShowSuggestions(false);
+      setSuggestions([]);
+
+      // Nouvelle session pour la prochaine recherche (bonne pratique de facturation Google)
+      sessionTokenRef.current = null;
+
+      if (mapRef.current) {
+        mapRef.current.panTo(newPos);
+        mapRef.current.setZoom(15);
       }
+    } catch (err) {
+      console.error('Erreur lors de la sélection du lieu:', err);
     }
   };
 
@@ -97,46 +168,121 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
 
   if (!isOpen) return null;
 
-  if (loadError) return <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"><div className="bg-white p-6 rounded-lg text-red-500">Erreur de chargement de la carte</div></div>;
+  if (loadError) {
+    return (
+      <div className="mp-overlay">
+        <div className="mp-error-box">
+          <X size={48} />
+          <p>Erreur de chargement de Google Maps.</p>
+          <p className="mp-error-sub">Vérifiez votre clé API ou votre connexion.</p>
+          <button onClick={onClose} className="mp-btn mp-btn-secondary">
+            Fermer
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoaded) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-        <div className="bg-white p-6 rounded-lg flex items-center gap-3">
-          <Loader2 className="animate-spin text-orange-500" />
-          <span>Chargement de la carte...</span>
+      <div className="mp-overlay">
+        <div className="mp-loading-box">
+          <Loader2 size={48} className="animate-spin mp-text-orange" />
+          <p>Chargement de la carte...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
+    <div className="mp-overlay">
+      <div className="mp-modal">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="text-lg font-bold flex items-center gap-2">
-            <MapPin size={20} className="text-orange-500" />
+        <div className="mp-header">
+          <h3 className="mp-title">
+            <MapPin size={20} className="mp-text-orange" />
             Choisir un lieu sur la carte
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+          <button onClick={onClose} className="mp-close-btn" aria-label="Fermer">
             <X size={20} />
           </button>
         </div>
 
-        {/* Search Bar */}
-        <div className="p-4 border-b bg-gray-50">
-          <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged}>
+        {/* Search Bar (nouvelle Places API, sans <Autocomplete> legacy) */}
+        <div className="mp-search-bar" ref={searchWrapperRef} style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
+            <Search
+              size={16}
+              style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}
+            />
             <input
               type="text"
+              value={searchInput}
+              onChange={handleSearchChange}
+              onFocus={() => searchInput.length >= 2 && setShowSuggestions(true)}
               placeholder="Rechercher un lieu..."
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="mp-search-input"
+              style={{ paddingLeft: 32 }}
+              autoComplete="off"
             />
-          </Autocomplete>
+            {isSearching && (
+              <Loader2
+                size={16}
+                className="animate-spin"
+                style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)' }}
+              />
+            )}
+          </div>
+
+          {showSuggestions && suggestions.length > 0 && (
+            <ul
+              className="mp-suggestions-list"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                zIndex: 20,
+                background: '#fff',
+                border: '1px solid #e2e8f0',
+                borderRadius: 8,
+                marginTop: 4,
+                maxHeight: 240,
+                overflowY: 'auto',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                listStyle: 'none',
+                padding: 4,
+              }}
+            >
+              {suggestions.map((suggestion, idx) => {
+                const prediction = suggestion.placePrediction;
+                return (
+                  <li
+                    key={prediction.placeId || idx}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 10px',
+                      cursor: 'pointer',
+                      borderRadius: 6,
+                      fontSize: 14,
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  >
+                    <MapPin size={14} style={{ opacity: 0.5, flexShrink: 0 }} />
+                    <span>{prediction.text.text}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         {/* Map */}
-        <div className="flex-grow relative">
+        <div className="mp-map-container">
           <GoogleMap
             onLoad={onMapLoad}
             onClick={onMapClick}
@@ -147,18 +293,20 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
               streetViewControl: false,
               mapTypeControl: false,
               fullscreenControl: false,
+              zoomControl: true,
+              clickableIcons: false,
             }}
           >
             {markerPosition && <Marker position={markerPosition} />}
           </GoogleMap>
-          
+
           {/* Coordinates & Address display */}
           {markerPosition && (
-            <div className="absolute bottom-4 left-4 right-4 sm:left-4 sm:right-auto sm:max-w-[80%] bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-              <p className="text-sm font-semibold text-gray-800 truncate">
+            <div className="mp-info-card">
+              <p className="mp-info-address">
                 {selectedAddress}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="mp-info-coords">
                 Lat: {markerPosition.lat.toFixed(5)}, Lng: {markerPosition.lng.toFixed(5)}
               </p>
             </div>
@@ -166,11 +314,11 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-white flex justify-end gap-3">
+        <div className="mp-footer">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+            className="mp-btn mp-btn-secondary"
           >
             Annuler
           </button>
@@ -178,7 +326,7 @@ const MapPickerModal = ({ isOpen, onClose, onSelect, initialLat, initialLng }) =
             type="button"
             onClick={handleConfirm}
             disabled={!markerPosition}
-            className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mp-btn mp-btn-primary"
           >
             <Check size={18} /> Confirmer la sélection
           </button>

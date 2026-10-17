@@ -1,55 +1,62 @@
-/* --- Conteneur Principal --- */
-.od-hist-container {
+/* ═══════════════════════════════════════════════════════════
+   CONTENEUR PRINCIPAL
+   ═══════════════════════════════════════════════════════════ */
+   .od-hist-container {
+    background: #ffffff;
+    border-radius: 16px;
     padding: 24px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+
   }
   
-  /* --- En-tête --- */
+  /* ═══════════════════════════════════════════════════════════
+     EN-TÊTE
+     ═══════════════════════════════════════════════════════════ */
   .od-hist-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
   }
   
   .od-hist-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: #0f172a;
+    color: #111827;
     margin: 0 0 4px 0;
   }
   
   .od-hist-subtitle {
-    font-size: 0.875rem;
-    color: #64748b;
+    font-size: 0.9rem;
+    color: #6b7280;
     margin: 0;
   }
   
   .od-hist-btn-export {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    background-color: #f1f5f9;
-    color: #334155;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 0.875rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
   }
   
   .od-hist-btn-export:hover {
-    background-color: #e2e8f0;
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #111827;
   }
   
-  /* --- Barre de Recherche --- */
+  /* ═══════════════════════════════════════════════════════════
+     BARRE DE RECHERCHE
+     ═══════════════════════════════════════════════════════════ */
   .od-hist-filters-bar {
     margin-bottom: 20px;
   }
@@ -61,174 +68,277 @@
   
   .od-hist-search-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: #9ca3af;
     pointer-events: none;
   }
   
   .od-hist-search-input {
     width: 100%;
-    padding: 10px 12px 10px 40px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    color: #0f172a;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 12px 16px 12px 44px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #111827;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    outline: none;
   }
   
   .od-hist-search-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: #ffffff;
+    border-color: #f97316; /* Orange Delivo */
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
   }
   
-  /* --- Tableau --- */
+  .od-hist-search-input::placeholder {
+    color: #9ca3af;
+  }
+  
+  /* ═══════════════════════════════════════════════════════════
+     TABLEAU
+     ═══════════════════════════════════════════════════════════ */
   .od-hist-table-container {
     overflow-x: auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
+    border: 1px solid #f3f4f6;
   }
   
   .od-hist-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
-  }
-  
-  /* STYLE DU THEAD (Demandé) */
-  .od-hist-table thead {
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
+    font-size: 0.95rem;
   }
   
   .od-hist-table th {
-    padding: 14px 16px;
-    text-align: left;
+    background: #f9fafb;
+    color: #6b7280;
     font-weight: 600;
-    color: #475569;
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    white-space: nowrap;
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
   }
   
   .od-hist-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #f1f5f9;
-    color: #334155;
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #111827;
     vertical-align: middle;
   }
   
-  .od-hist-table tbody tr {
+  .od-hist-row {
+    cursor: pointer;
     transition: background-color 0.15s ease;
   }
   
-  .od-hist-table tbody tr:hover {
-    background-color: #f8fafc;
-    cursor: pointer;
+  .od-hist-row:hover {
+    background-color: #fff7ed; /* Très léger orange au survol */
   }
   
-  .od-hist-table tbody tr:last-child td {
+  .od-hist-row:last-child td {
     border-bottom: none;
   }
   
-  .od-hist-order-id {
+  /* Référence commande */
+  .od-hist-ref {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-weight: 600;
-    color: #2563eb;
+    color: #000;
+    background: #fff7ed;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
   }
   
-  /* --- Badges de Statut --- */
+  /* Avatar & Utilisateur */
+  .od-hist-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .od-hist-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+  
+  .od-hist-avatar.avatar-livreur {
+    background: #ecfdf5;
+    color: #059669;
+  }
+  
+  .od-hist-user-name {
+    font-weight: 500;
+    color: #111827;
+  }
+  
+  .text-muted {
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+  
+  /* Badges */
   .od-hist-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 9999px;
-    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 600;
     text-transform: capitalize;
   }
   
-  .od-hist-badge-success {
-    background-color: #dcfce7;
+  .badge-success {
+    background: #dcfce7;
     color: #166534;
   }
   
-  .od-hist-badge-danger {
-    background-color: #fee2e2;
+  .badge-danger {
+    background: #fee2e2;
     color: #991b1b;
   }
   
-  .od-hist-badge-gray {
-    background-color: #f1f5f9;
-    color: #475569;
+  .badge-gray {
+    background: #f3f4f6;
+    color: #4b5563;
   }
   
-  /* --- Bouton d'Action dans le tableau --- */
+  .od-hist-amount {
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+  }
+  
+  /* Bouton d'action */
   .od-hist-action-btn {
-    background: none;
-    border: none;
-    color: #64748b;
-    cursor: pointer;
-    padding: 6px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    display: flex;
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
   
   .od-hist-action-btn:hover {
-    background-color: #e0f2fe;
-    color: #0284c7;
+    background: #f97316;
+    border-color: #f97316;
+    color: #ffffff;
+    transform: translateX(2px);
   }
   
-  /* --- Pagination --- */
-  .od-hist-pagination {
+  /* ═══════════════════════════════════════════════════════════
+     ÉTAT VIDE & LOADER
+     ═══════════════════════════════════════════════════════════ */
+  .od-hist-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+  }
+  
+  .empty-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: #f9fafb;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: #d1d5db;
+  }
+  
+  .od-hist-empty-state h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 8px 0;
+  }
+  
+  .od-hist-empty-state p {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+  
+  .od-hist-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: #6b7280;
+    gap: 16px;
+  }
+  
+  .od-hist-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
     padding: 16px;
-    background-color: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+  
+  /* ═══════════════════════════════════════════════════════════
+     PAGINATION
+     ═══════════════════════════════════════════════════════════ */
+  .od-hist-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 16px 0;
+    border-top: 1px solid #f3f4f6;
+    margin-top: 8px;
   }
   
   .od-hist-pagination-info {
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-  
-  .od-hist-pagination-info strong {
-    color: #0f172a;
-    font-weight: 600;
+    font-size: 0.9rem;
+    color: #6b7280;
   }
   
   .od-hist-pagination-nav {
     display: flex;
-    align-items: center;
     gap: 8px;
   }
   
   .od-hist-pagination-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
-    color: #475569;
-    border-radius: 6px;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
   }
   
   .od-hist-pagination-btn:hover:not(:disabled) {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #f9fafb;
+    border-color: #d1d5db;
   }
   
   .od-hist-pagination-btn:disabled {
@@ -236,41 +346,119 @@
     cursor: not-allowed;
   }
   
-  .od-hist-pagination-current {
-    display: inline-flex;
-    align-items: center;
-    padding: 0 12px;
-    height: 36px;
-    border: 1px solid #e2e8f0;
-    background-color: #f8fafc;
-    color: #0f172a;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-  
-  /* --- États Vides et Erreurs --- */
-  .od-hist-empty-state {
+  .text-center {
     text-align: center;
-    padding: 48px 16px;
-    color: #64748b;
   }
   
-  .od-hist-error {
-    padding: 12px 16px;
-    margin-bottom: 16px;
-    background-color: #fef2f2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
-    font-size: 0.875rem;
+  /* Responsive */
+  @media (max-width: 768px) {
+    .od-hist-header {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .od-hist-search-wrapper {
+      max-width: 100%;
+    }
+    
+    .od-hist-pagination {
+      flex-direction: column;
+      gap: 16px;
+    }
   }
-  
-  .od-hist-loader {
-    display: flex;
-    align-items: center;
+
+  /* =========================================
+   FILTRES PAR PÉRIODE (Segmented Control - RESPONSIVE)
+   ========================================= */
+.od-hist-period-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 6px;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  width: 100%; /* Prend toute la largeur disponible au lieu de fit-content */
+  overflow-x: auto; /* Permet le défilement horizontal sur petit écran */
+  -webkit-overflow-scrolling: touch; /* Défilement fluide et naturel sur iOS */
+  scrollbar-width: none; /* Cache la barre de défilement (Firefox) */
+}
+
+/* Cache la barre de défilement (Chrome, Safari, Edge) */
+.od-hist-period-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.od-period-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* ⚠️ Empêche le texte de passer à la ligne */
+  flex-shrink: 0; /* ⚠️ Empêche les boutons de s'écraser/rétrécir */
+}
+
+.od-period-btn:hover {
+  color: #0f172a;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.od-period-btn.active {
+  background-color: #ffffff;
+  color: #f0672b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Badge Warning pour les statuts en cours */
+.badge-warning {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+/* =========================================
+   RESPONSIVE : Adaptations Mobile
+   ========================================= */
+@media (max-width: 640px) {
+  .od-hist-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .od-hist-btn-export {
+    width: 100%;
     justify-content: center;
-    height: 256px;
-    color: #64748b;
-    gap: 8px;
   }
+
+  /* Le tableau devient scrollable horizontalement si besoin */
+  .od-hist-table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+  }
+  
+  .od-hist-table {
+    min-width: 600px; /* Force le tableau à garder sa lisibilité */
+  }
+}
+
+/* Badge de compteur à côté du nom du filtre */
+.od-count-badge {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* Quand le bouton est actif, le badge prend la couleur principale pour ressortir */
+.od-period-btn.active .od-count-badge {
+  color: #f0672b;
+  opacity: 1;
+}

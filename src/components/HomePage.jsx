@@ -9,6 +9,7 @@ import step2 from "../assets/step2.jfif";
 import step3 from "../assets/step3.png";
 import logo_watermark from "../assets/logo_watermark_white.png";
 import cta from "../assets/cta-delivery-removebg-preview.png";
+import Header from './header/header';
 
 import {
   Package,
@@ -69,39 +70,7 @@ function HomePage() {
 
   return (
     <div className="App">
-      <header className={isScrolled ? 'scrolled' : ''}>
-        <div className="container nav-wrap">
-          <a href="#accueil" className="logo">
-            <img src={logo} alt="Gabon Livraison Express" />
-          </a>
-
-          <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
-            <a href="#apropos" onClick={closeMenu}>À propos</a>
-            <a href="#comment" onClick={closeMenu}>Comment ça marche ?</a>
-            <Link to="/inscription-vendeur" onClick={closeMenu}> Devenir Vendeur</Link>
-            <Link to="/inscription-livreur" onClick={closeMenu}> Devenir Livreur</Link>
-          
-
-            <Link
-              to="/"
-              className="btn btn-orange mobile-login-btn"
-              onClick={closeMenu}
-            >
-              Télécharger
-            </Link>
-          </nav>
-
-          <div className="header-cta">
-            <Link to="/" className="btn btn-orange">
-              Télécharger
-            </Link>
-          </div>
-
-          <button className="burger" onClick={toggleMenu} aria-label="Menu">
-            <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
-          </button>
-        </div>
-      </header>
+     <Header/>
 
       <main>
         {/* HERO */}

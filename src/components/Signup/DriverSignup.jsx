@@ -248,16 +248,31 @@ const DriverSignup = () => {
                   </section>
 
                   <section className="condition-block">
-                    <h3><Clock size={18} /> 3. Fonctionnement du Système d'Attribution</h3>
+                    <h3>
+                      <Clock size={18} /> 3. Fonctionnement du Système d'Attribution
+                    </h3>
+
                     <ul>
-                      <li>Les livraisons sont attribuées <strong>automatiquement</strong> en fonction de votre position GPS, 
-                          de vos disponibilités déclarées et du volume de colis dans votre zone.</li>
-                      <li>En cas d'échec d'attribution automatique, l'administrateur peut procéder à une 
-                          <strong> attribution manuelle</strong>.</li>
-                      <li>Il n'y a pas de bouton « accepter » : <strong>toute course reçue doit être exécutée</strong> 
-                          sous peine de pénalité.</li>
-                      <li>Vous devez maintenir votre statut à jour : <strong>Disponible</strong>, <strong>En livraison</strong> 
-                          ou <strong>Indisponible</strong>.</li>
+                      <li>
+                        Les livraisons sont attribuées <strong>automatiquement</strong> en fonction de votre position GPS,
+                        de vos disponibilités déclarées et du volume de colis dans votre zone.
+                      </li>
+
+                      <li>
+                        En cas d'échec de l'attribution automatique, l'administrateur peut procéder à une
+                        <strong> attribution manuelle</strong>.
+                      </li>
+
+                      <li>
+                        Une fois qu'une course est proposée, un bouton <strong>« Accepter »</strong> permet au livreur de
+                        confirmer sa prise en charge. Dès qu'un livreur accepte la commande, celle-ci lui est attribuée et
+                        <strong> aucun autre livreur ne peut ensuite l'accepter</strong>.
+                      </li>
+
+                      <li>
+                        Vous devez maintenir votre statut à jour : <strong>Disponible</strong>,
+                        <strong> En livraison</strong> ou <strong> Indisponible</strong>.
+                      </li>
                     </ul>
                   </section>
 

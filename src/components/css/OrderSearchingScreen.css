@@ -1,0 +1,606 @@
+/* ═══════════════════════════════════════════════════════════
+   ORDER SEARCHING SCREEN
+   Préfixe : os-
+   ═══════════════════════════════════════════════════════════ */
+
+   :root {
+    --os-orange: #f97316;
+    --os-orange-dark: #ea580c;
+    --os-orange-light: rgba(249, 115, 22, 0.1);
+    --os-orange-border: rgba(249, 115, 22, 0.3);
+    --os-green: #22c55e;
+    --os-green-light: rgba(34, 197, 94, 0.1);
+    --os-black: #0f172a;
+    --os-gray-900: #111827;
+    --os-gray-700: #374151;
+    --os-gray-500: #6b7280;
+    --os-gray-300: #d1d5db;
+    --os-gray-200: #e5e7eb;
+    --os-gray-100: #f3f4f6;
+    --os-gray-50: #f9fafb;
+    --os-white: #ffffff;
+    --os-bg: #f7f7fa;
+    
+    --os-radius-sm: 12px;
+    --os-radius-md: 16px;
+    --os-radius-lg: 20px;
+    --os-radius-full: 50%;
+    
+    --os-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --os-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --os-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.1);
+    --os-shadow-orange: 0 8px 18px rgba(249, 115, 22, 0.28);
+    --os-shadow-green: 0 8px 18px rgba(34, 197, 94, 0.28);
+    
+    --os-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     PAGE LAYOUT
+     ─────────────────────────────────────────────────────────── */
+  .os-page {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+    background: var(--os-bg);
+
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     HEADER
+     ─────────────────────────────────────────────────────────── */
+  .os-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0 20px;
+  }
+  
+  .os-back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--os-white);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--os-shadow-md);
+    color: var(--os-gray-700);
+    cursor: pointer;
+    transition: var(--os-transition);
+  }
+  
+  .os-back-btn:hover {
+    background: var(--os-gray-100);
+    transform: translateX(-2px);
+  }
+  
+  .os-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--os-black);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     RADAR AREA
+     ─────────────────────────────────────────────────────────── */
+  .os-radar-area {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 32px;
+  }
+  
+  .os-radar-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  @media (max-width: 480px) {
+    .os-radar-container {
+      width: 240px;
+      height: 240px;
+    }
+  }
+  
+  /* Cercles concentriques */
+  .os-radar-circle {
+    position: absolute;
+    border-radius: var(--os-radius-full);
+    border: 1px solid rgba(156, 163, 175, 0.12);
+    transition: border-color 0.4s ease;
+  }
+  
+  .os-radar-circle.active {
+    border: 2px solid var(--os-orange-border);
+  }
+  
+  /* Label du rayon actif */
+  .os-radius-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    background: var(--os-orange);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+    white-space: nowrap;
+  }
+  
+  /* Animation balayage radar */
+  .os-radar-sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--os-radius-full);
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(249, 115, 22, 0.2) 30deg,
+      transparent 60deg
+    );
+    animation: os-radar-sweep 2s linear infinite;
+  }
+  
+  @keyframes os-radar-sweep {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Point central */
+  .os-radar-center {
+    position: relative;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    background: var(--os-orange);
+    border-radius: var(--os-radius-full);
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.3), var(--os-shadow-md);
+  }
+  
+  /* Badge du livreur */
+  .os-livreur-badge {
+    position: absolute;
+    top: 14%;
+    right: 14%;
+    padding: 4px;
+    background: var(--os-green);
+    border-radius: var(--os-radius-full);
+    border: 3px solid white;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3), var(--os-shadow-lg);
+    animation: os-pulse-badge 1.5s ease-in-out infinite;
+    z-index: 3;
+  }
+  
+  @keyframes os-pulse-badge {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
+  .os-livreur-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--os-radius-full);
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     STATUS CARD
+     ─────────────────────────────────────────────────────────── */
+  .os-status-card {
+    padding: 20px;
+    border-radius: var(--os-radius-lg);
+    color: white;
+    box-shadow: var(--os-shadow-orange);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .os-status-card.searching {
+    background: linear-gradient(135deg, var(--os-orange) 0%, rgba(249, 115, 22, 0.78) 100%);
+  }
+  
+  .os-status-card.success {
+    background: linear-gradient(135deg, var(--os-green) 0%, rgba(34, 197, 94, 0.78) 100%);
+    box-shadow: var(--os-shadow-green);
+  }
+  
+  .os-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .os-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: var(--os-radius-full);
+    animation: os-spin 0.8s linear infinite;
+  }
+  
+  @keyframes os-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .os-check-circle {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: var(--os-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--os-green);
+  }
+  
+  .os-status-text {
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .os-status-sub {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     DETAILS CARD
+     ─────────────────────────────────────────────────────────── */
+  .os-details-card {
+    background: var(--os-white);
+    border: 1px solid var(--os-gray-200);
+    border-radius: var(--os-radius-lg);
+    padding: 20px;
+    box-shadow: var(--os-shadow-sm);
+  }
+  
+  .os-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--os-gray-100);
+  }
+  
+  .os-card-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--os-black);
+  }
+  
+  .os-icon-orange {
+    color: var(--os-orange);
+  }
+  
+  .os-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  
+  .os-info-icon {
+    color: var(--os-gray-500);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  
+  .os-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+  
+  .os-info-label {
+    font-size: 11.5px;
+    color: var(--os-gray-500);
+  }
+  
+  .os-info-value {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--os-black);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  .os-divider {
+    height: 1px;
+    background: var(--os-gray-200);
+    margin: 18px 0;
+  }
+  
+  .os-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .os-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    background: var(--os-orange-light);
+    border: 1px solid var(--os-orange-border);
+    border-radius: 20px;
+    color: var(--os-orange);
+    font-size: 12.5px;
+    font-weight: 800;
+  }
+  
+  .os-chip-icon {
+    color: var(--os-orange);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     DIALOG
+     ─────────────────────────────────────────────────────────── */
+  .os-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  
+  .os-dialog {
+    background: var(--os-white);
+    border-radius: var(--os-radius-lg);
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--os-shadow-lg);
+  }
+  
+  .os-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  
+  .os-dialog-icon-wrap {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--os-orange-light);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  
+  .os-dialog-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--os-black);
+  }
+  
+  .os-dialog-text {
+    margin: 0 0 20px 0;
+    font-size: 13.5px;
+    color: var(--os-gray-500);
+    line-height: 1.5;
+  }
+  
+  .os-dialog-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     BOUTONS
+     ─────────────────────────────────────────────────────────── */
+  .os-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--os-radius-sm);
+    cursor: pointer;
+    transition: var(--os-transition);
+    border: 1.5px solid transparent;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  
+  .os-btn-primary {
+    background: var(--os-orange);
+    color: white;
+  }
+  
+  .os-btn-primary:hover {
+    background: var(--os-orange-dark);
+  }
+  
+  .os-btn-secondary {
+    background: transparent;
+    color: var(--os-gray-500);
+    border-color: transparent;
+  }
+  
+  .os-btn-secondary:hover {
+    background: var(--os-gray-100);
+    color: var(--os-gray-700);
+  }
+  
+  /* ───────────────────────────────────────────────────────────
+     MAIN CONTENT
+     ─────────────────────────────────────────────────────────── */
+  .os-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+   BANNIÈRE "DEMANDE ENREGISTRÉE"
+   ═══════════════════════════════════════════════════════════ */
+
+.os-saved-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #93c5fd;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.os-saved-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+}
+
+.os-saved-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.os-saved-text strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.os-saved-text span {
+  font-size: 12px;
+  color: #1e3a8a;
+  line-height: 1.4;
+}
+
+/* ⏳ Status d'enregistrement en cours */
+.os-reporting-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Animation spin */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIALOG ÉCHEC SIMPLIFIÉE
+   ═══════════════════════════════════════════════════════════ */
+
+   .os-dialog-failure {
+    text-align: center;
+    max-width: 420px;
+  }
+  
+  .os-failure-icon-wrap {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 50%;
+  }
+  
+  .os-icon-success {
+    color: #22c55e;
+  }
+  
+  .os-icon-warning {
+    color: #f97316;
+  }
+  
+  .os-failure-title {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .os-failure-message {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+  }
+  
+  .os-failure-ref {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #f1f5f9;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  
+  .os-btn-full {
+    width: 100%;
+    flex: 1;
+    justify-content: center;
+  }

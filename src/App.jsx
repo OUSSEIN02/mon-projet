@@ -9,12 +9,18 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import DashboardVendeur from './components/Dashboard/dashboard';
 import SellerSignup from './components/admin/SellerSignup';
 import DriverSignup from './components/Signup/DriverSignup';
+import LivreurAppDownload from './components/ui/LivreurAppDownload';
+import PublicOrderTrackingScreen from './components/ui/PublicOrderTrackingScreen';
 import Login from './components/login/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import ForgotPassword from './components/login/ForgotPassword';
+
+import AccountPending from './components/ui/AccountPending';
 
 
 
 function App() {
+  
   return (
     <Router basename={import.meta.env.BASE_URL}>
       <Routes>
@@ -23,12 +29,16 @@ function App() {
       <Route element={<ProtectedRoute  />}>
         <Route path="/dashboard/*" element={<DashboardVendeur />} />
       </Route>
+      <Route path="/livreur-app" element={<LivreurAppDownload />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/account-pending" element={<AccountPending />} />
       <Route path="/unauthorized" element={<h1>403 - Accès non autorisé</h1>} />
 
         <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/auth" element={<Login />} />
         <Route path="/inscription-vendeur" element={<SellerSignup />} />
         <Route path="/inscription-livreur" element={<DriverSignup />} />
+        <Route path="/suivi/:id" element={<PublicOrderTrackingScreen />} />
       </Routes>
 
       <Toaster 

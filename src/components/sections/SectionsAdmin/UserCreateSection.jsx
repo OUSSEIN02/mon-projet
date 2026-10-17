@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, 
-  Check, Shield, Loader2
+  Check, Shield, Loader2, Info
 } from 'lucide-react';
-import apiClient from '../../../services/apiClient'; // Ajustez le chemin si nécessaire
+import apiClient from '../../../services/apiClient';
 import toast from 'react-hot-toast';
 
 const UserCreateSection = () => {
@@ -66,7 +66,7 @@ const UserCreateSection = () => {
             name: user.name || '',
             email: user.email || '',
             phone: user.phone || '',
-            password: '' // On ne pré-remplit jamais le mot de passe
+            password: ''
           });
           
           if (user.roles && Array.isArray(user.roles)) {
@@ -229,6 +229,18 @@ const UserCreateSection = () => {
             {isEditMode 
               ? 'Modifiez les informations de l\'utilisateur et ses permissions' 
               : 'Créez un nouvel utilisateur et attribuez-lui des rôles'}
+          </p>
+        </div>
+      </div>
+
+      {/* Message d'information important */}
+      <div className="uc-info-box">
+        <Info size={20} className="uc-info-icon" />
+        <div className="uc-info-content">
+          <h4 className="uc-info-title">Utilisateurs de gestion uniquement</h4>
+          <p className="uc-info-text">
+            Cette section est réservée à la création des membres de votre équipe interne (secrétaires, administrateurs, collaborateurs, etc.). 
+            Pour gérer les <strong>livreurs</strong> et les <strong>vendeurs</strong>, veuillez vous rendre dans les sections dédiées du menu latéral.
           </p>
         </div>
       </div>
@@ -519,402 +531,149 @@ const UserCreateSection = () => {
         }
 
         /* Header & Breadcrumb */
-        .uc-header {
+        .uc-header { margin-bottom: 24px; }
+        .uc-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 16px; color: #6b7280; }
+        .uc-breadcrumb-link { display: flex; align-items: center; gap: 6px; color: #6b7280; background: none; border: none; cursor: pointer; font-size: 14px; transition: color 0.2s; }
+        .uc-breadcrumb-link:hover { color: #F26A22; }
+        .uc-breadcrumb-separator { color: #d1d5db; }
+        .uc-breadcrumb-current { font-weight: 500; color: #111827; }
+        .uc-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px 0; }
+        .uc-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+
+        /* Info Box (NOUVEAU) */
+        .uc-info-box {
+          display: flex;
+          gap: 16px;
+          padding: 16px;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          border-radius: 8px;
           margin-bottom: 24px;
         }
-        .uc-breadcrumb {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          margin-bottom: 16px;
-          color: #6b7280;
-        }
-        .uc-breadcrumb-link {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: #6b7280;
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 14px;
-          transition: color 0.2s;
-        }
-        .uc-breadcrumb-link:hover {
-          color: #F26A22;
-        }
-        .uc-breadcrumb-separator {
-          color: #d1d5db;
-        }
-        .uc-breadcrumb-current {
-          font-weight: 500;
-          color: #111827;
-        }
-        .uc-title {
-          font-size: 24px;
-          font-weight: 700;
-          color: #111827;
-          margin: 0 0 4px 0;
-        }
-        .uc-subtitle {
-          font-size: 14px;
-          color: #6b7280;
-          margin: 0;
-        }
-
-        /* Carte principale */
-        .uc-card {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-          border: 1px solid #f3f4f6;
-          overflow: hidden;
-        }
-        .uc-card-body {
-          padding: 24px;
-        }
-        .uc-section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #111827;
-          margin: 0 0 20px 0;
-          padding-bottom: 12px;
-          border-bottom: 1px solid #f3f4f6;
-        }
-
-        /* Formulaire Grid */
-        .uc-form-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 20px;
-        }
-        .uc-form-group {
-          display: flex;
-          flex-direction: column;
-        }
-        .uc-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #374151;
-          margin-bottom: 6px;
-        }
-        .uc-required {
-          color: #dc2626;
-        }
-        .uc-input-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-        .uc-input-icon {
-          position: absolute;
-          left: 12px;
-          color: #9ca3af;
-          pointer-events: none;
-        }
-        .uc-input {
-          width: 100%;
-          padding: 10px 14px 10px 40px;
-          border: 1px solid #d1d5db;
-          border-radius: 8px;
-          font-size: 14px;
-          color: #111827;
-          background: white;
-          transition: all 0.2s;
-        }
-        .uc-input:focus {
-          outline: none;
-          border-color: #F26A22;
-          box-shadow: 0 0 0 3px rgba(242, 106, 34, 0.1);
-        }
-        .uc-input.uc-error {
-          border-color: #dc2626;
-        }
-        .uc-input.uc-error:focus {
-          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-        }
-        .uc-input-toggle {
-          position: absolute;
-          right: 12px;
-          background: none;
-          border: none;
-          color: #9ca3af;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          padding: 4px;
-        }
-        .uc-input-toggle:hover {
-          color: #6b7280;
-        }
-        .uc-error-text {
-          font-size: 12px;
-          color: #dc2626;
-          margin-top: 4px;
-          margin-bottom: 0;
-        }
-        .uc-error-block {
-          margin-bottom: 16px;
-          font-weight: 500;
-        }
-
-        /* Section Rôles */
-        .uc-roles-section {
-          margin-top: 32px;
-        }
-        .uc-roles-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 20px;
-        }
-        .uc-role-card {
-          display: flex;
-          flex-direction: column;
-          padding: 20px;
-          border: 2px solid #e5e7eb;
-          border-radius: 10px;
-          background: white;
-          transition: all 0.2s;
-          min-height: 200px;
-        }
-        .uc-role-card:hover {
-          border-color: #d1d5db;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .uc-role-card.uc-role-selected {
-          border-color: #F26A22;
-          background: #fff7ed;
-          box-shadow: 0 2px 8px rgba(242, 106, 34, 0.15);
-        }
-        .uc-role-header {
-          display: flex;
-          align-items: flex-start;
-          gap: 12px;
-          margin-bottom: 16px;
-        }
-        .uc-role-checkbox-wrapper {
-          position: relative;
+        .uc-info-icon {
+          color: #2563eb;
           flex-shrink: 0;
           margin-top: 2px;
         }
-        .uc-checkbox {
-          width: 20px;
-          height: 20px;
-          border: 2px solid #d1d5db;
-          border-radius: 5px;
-          cursor: pointer;
-          appearance: none;
-          transition: all 0.2s;
-        }
-        .uc-role-selected .uc-checkbox {
-          background: #F26A22;
-          border-color: #F26A22;
-        }
-        .uc-checkbox-icon {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-          pointer-events: none;
-        }
-        .uc-role-info {
-          flex: 1;
-        }
-        .uc-role-name {
-          font-size: 16px;
-          font-weight: 700;
-          color: #111827;
+        .uc-info-content { flex: 1; }
+        .uc-info-title {
           margin: 0 0 4px 0;
-        }
-        .uc-role-description {
-          font-size: 13px;
-          color: #6b7280;
-          margin: 0;
-          line-height: 1.4;
-        }
-
-        /* Liste des permissions */
-        .uc-permissions-list {
-          margin-top: auto;
-          padding-top: 16px;
-          border-top: 1px solid #f3f4f6;
-        }
-        .uc-permissions-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-        .uc-permission-item {
-          display: inline-flex;
-          align-items: center;
-          padding: 6px 12px;
-          background: #f3f4f6;
-          color: #374151;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 500;
-          border: 1px solid #e5e7eb;
-          transition: all 0.2s;
-        }
-        .uc-role-selected .uc-permission-item {
-          background: white;
-          border-color: #fdba74;
-          color: #c24b0e;
-        }
-        .uc-no-permissions {
-          font-size: 13px;
-          color: #9ca3af;
-          font-style: italic;
-          margin: 0;
-          margin-top: auto;
-          padding-top: 16px;
-          border-top: 1px solid #f3f4f6;
-        }
-
-        /* Footer & Boutons */
-        .uc-card-footer {
-          padding: 16px 24px;
-          background: #f9fafb;
-          border-top: 1px solid #f3f4f6;
-          display: flex;
-          justify-content: flex-end;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .uc-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 10px 20px;
           font-size: 14px;
           font-weight: 600;
-          border-radius: 8px;
-          border: 1px solid transparent;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
+          color: #1e40af;
         }
-        .uc-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+        .uc-info-text {
+          margin: 0;
+          font-size: 13px;
+          color: #1e3a8a;
+          line-height: 1.5;
         }
-        .uc-btn-primary {
-          background: #F26A22;
-          color: white;
-          box-shadow: 0 2px 4px rgba(242, 106, 34, 0.2);
+        .uc-info-text strong {
+          color: #1e40af;
+          font-weight: 600;
         }
-        .uc-btn-primary:hover:not(:disabled) {
-          background: #d95a1a;
-        }
-        .uc-btn-secondary {
-          background: white;
-          color: #374151;
-          border-color: #d1d5db;
-        }
-        .uc-btn-secondary:hover:not(:disabled) {
-          background: #f3f4f6;
-          border-color: #9ca3af;
-        }
-        .uc-btn-outline {
-          background: white;
-          color: #F26A22;
-          border-color: #fdba74;
-        }
-        .uc-btn-outline:hover:not(:disabled) {
-          background: #fff7ed;
-          border-color: #F26A22;
-        }
-        .uc-spinner-btn {
-          animation: uc-spin 1s linear infinite;
-        }
-        @keyframes uc-spin {
-          to { transform: rotate(360deg); }
-        }
+
+        /* Carte principale */
+        .uc-card { background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; overflow: hidden; }
+        .uc-card-body { padding: 24px; }
+        .uc-section-title { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6; }
+
+        /* Formulaire Grid */
+        .uc-form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .uc-form-group { display: flex; flex-direction: column; }
+        .uc-label { font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+        .uc-required { color: #dc2626; }
+        .uc-input-wrapper { position: relative; display: flex; align-items: center; }
+        .uc-input-icon { position: absolute; left: 12px; color: #9ca3af; pointer-events: none; }
+        .uc-input { width: 100%; padding: 10px 14px 10px 40px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; color: #111827; background: white; transition: all 0.2s; }
+        .uc-input:focus { outline: none; border-color: #F26A22; box-shadow: 0 0 0 3px rgba(242, 106, 34, 0.1); }
+        .uc-input.uc-error { border-color: #dc2626; }
+        .uc-input.uc-error:focus { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+        .uc-input-toggle { position: absolute; right: 12px; background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; padding: 4px; }
+        .uc-input-toggle:hover { color: #6b7280; }
+        .uc-error-text { font-size: 12px; color: #dc2626; margin-top: 4px; margin-bottom: 0; }
+        .uc-error-block { margin-bottom: 16px; font-weight: 500; }
+
+        /* Section Rôles */
+        .uc-roles-section { margin-top: 32px; }
+        .uc-roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        .uc-role-card { display: flex; flex-direction: column; padding: 20px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; transition: all 0.2s; min-height: 200px; }
+        .uc-role-card:hover { border-color: #d1d5db; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .uc-role-card.uc-role-selected { border-color: #F26A22; background: #fff7ed; box-shadow: 0 2px 8px rgba(242, 106, 34, 0.15); }
+        .uc-role-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        .uc-role-checkbox-wrapper { position: relative; flex-shrink: 0; margin-top: 2px; }
+        .uc-checkbox { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 5px; cursor: pointer; appearance: none; transition: all 0.2s; }
+        .uc-role-selected .uc-checkbox { background: #F26A22; border-color: #F26A22; }
+        .uc-checkbox-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; pointer-events: none; }
+        .uc-role-info { flex: 1; }
+        .uc-role-name { font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 4px 0; }
+        .uc-role-description { font-size: 13px; color: #6b7280; margin: 0; line-height: 1.4; }
+
+        /* Liste des permissions */
+        .uc-permissions-list { margin-top: auto; padding-top: 16px; border-top: 1px solid #f3f4f6; }
+        .uc-permissions-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .uc-permission-item { display: inline-flex; align-items: center; padding: 6px 12px; background: #f3f4f6; color: #374151; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid #e5e7eb; transition: all 0.2s; }
+        .uc-role-selected .uc-permission-item { background: white; border-color: #fdba74; color: #c24b0e; }
+        .uc-no-permissions { font-size: 13px; color: #9ca3af; font-style: italic; margin: 0; margin-top: auto; padding-top: 16px; border-top: 1px solid #f3f4f6; }
+
+        /* Footer & Boutons */
+        .uc-card-footer { padding: 16px 24px; background: #f9fafb; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+        .uc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .uc-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .uc-btn-primary { background: #F26A22; color: white; box-shadow: 0 2px 4px rgba(242, 106, 34, 0.2); }
+        .uc-btn-primary:hover:not(:disabled) { background: #d95a1a; }
+        .uc-btn-secondary { background: white; color: #374151; border-color: #d1d5db; }
+        .uc-btn-secondary:hover:not(:disabled) { background: #f3f4f6; border-color: #9ca3af; }
+        .uc-btn-outline { background: white; color: #F26A22; border-color: #fdba74; }
+        .uc-btn-outline:hover:not(:disabled) { background: #fff7ed; border-color: #F26A22; }
+        .uc-spinner-btn { animation: uc-spin 1s linear infinite; }
+        @keyframes uc-spin { to { transform: rotate(360deg); } }
 
         /* Modal */
-        .uc-modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(17, 24, 39, 0.6);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 16px;
-          z-index: 50;
-          animation: uc-fade-in 0.2s ease-out;
-        }
-        @keyframes uc-fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .uc-modal {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-          max-width: 480px;
-          width: 100%;
-          animation: uc-scale-in 0.2s ease-out;
-        }
-        @keyframes uc-scale-in {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .uc-modal-header {
-          padding: 24px 24px 0 24px;
-        }
-        .uc-modal-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: #111827;
-          margin: 0 0 8px 0;
-        }
-        .uc-modal-subtitle {
-          font-size: 14px;
-          color: #6b7280;
-          margin: 0;
-        }
-        .uc-modal-body {
-          padding: 24px;
-        }
-        .uc-modal-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 12px;
-          margin-top: 24px;
-        }
+        .uc-modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; animation: uc-fade-in 0.2s ease-out; }
+        @keyframes uc-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .uc-modal { background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; animation: uc-scale-in 0.2s ease-out; }
+        @keyframes uc-scale-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .uc-modal-header { padding: 24px 24px 0 24px; }
+        .uc-modal-title { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
+        .uc-modal-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+        .uc-modal-body { padding: 24px; }
+        .uc-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
 
         /* Loading State */
-        .uc-loading {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 400px;
-          color: #6b7280;
-        }
-        .uc-spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid #f3f4f6;
-          border-top-color: #F26A22;
-          border-radius: 50%;
-          animation: uc-spin 0.8s linear infinite;
-          margin-bottom: 16px;
-        }
+        .uc-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #6b7280; }
+        .uc-spinner { width: 40px; height: 40px; border: 3px solid #f3f4f6; border-top-color: #F26A22; border-radius: 50%; animation: uc-spin 0.8s linear infinite; margin-bottom: 16px; }
 
         /* Responsive */
         @media (min-width: 640px) {
-          .uc-form-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
+          .uc-form-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 639px) {
-          .uc-roles-grid {
-            grid-template-columns: 1fr;
+          .uc-roles-grid { grid-template-columns: 1fr; }
+          
+          .uc-info-box {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .uc-info-icon {
+            margin-top: 0;
+          }
+          
+          .uc-modal-actions {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .uc-modal-actions .uc-btn {
+            width: 100%;
+            justify-content: center;
+            white-space: normal;
+          }
+          .uc-card-footer {
+            flex-direction: column-reverse;
+            align-items: stretch;
+          }
+          .uc-card-footer .uc-btn {
+            width: 100%;
           }
         }
       `}</style>

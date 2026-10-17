@@ -235,26 +235,28 @@ const LivreursSection = () => {
               className="ls-select"
             >
               <option value="all">Tous les statuts</option>
-              <option value="En attente">En attente</option>
-              <option value="validé">Validé</option>
+              <option value="en_attente">En attente</option>
+              <option value="valide">Validé</option>
               <option value="suspendu">Suspendu</option>
             </select>
           </div>
 
           <div className="ls-filter-group">
-            <label htmlFor="zone-filter" className="ls-filter-label">Zone</label>
-            <select
-              id="zone-filter"
-              value={filterZone}
-              onChange={handleZoneChange}
-              className="ls-select"
-            >
-              <option value="all">Toutes les zones</option>
-              <option value="Estuaire">Estuaire</option>
-              <option value="Haut-Ogooué">Haut-Ogooué</option>
-              <option value="Ogooué-Maritime">Ogooué-Maritime</option>
-            </select>
-          </div>
+          <label htmlFor="zone-filter" className="ls-filter-label">Zone</label>
+          <select
+            id="zone-filter"
+            value={filterZone}
+            onChange={handleZoneChange}
+            className="ls-select"
+          >
+            <option value="all">Toutes les zones</option>
+            <option value="Moyen-Ogooué (Lambaréné)">Moyen-Ogooué (Lambaréné)</option>
+            <option value="Ngounié (Mouila)">Ngounié (Mouila)</option>
+            <option value="Nyanga (Tchibanga)">Nyanga (Tchibanga)</option>
+            <option value="Ogooué-Ivindo (Makokou)">Ogooué-Ivindo (Makokou)</option>
+            
+          </select>
+        </div>
         </div>
       </div>
 
@@ -351,12 +353,7 @@ const LivreursSection = () => {
                           <button className="ls-icon-btn ls-icon-btn-view" title="Voir les détails" onClick={() => handleViewLivreur(livreur.id)}>
                             <Eye size={18} />
                           </button>
-                          <button className="ls-icon-btn ls-icon-btn-edit" title="Modifier">
-                            <Edit size={18} />
-                          </button>
-                          <button className="ls-icon-btn ls-icon-btn-more">
-                            <MoreHorizontal size={18} />
-                          </button>
+                        
                         </div>
                       </td>
                     </tr>
@@ -404,7 +401,7 @@ const LivreursSection = () => {
         .ls-container { max-width: 1280px; margin: 0 auto; padding: 24px; color: #111827; }
         .ls-container * { box-sizing: border-box; }
         .ls-header { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-        .ls-title { font-size: 28px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 12px; }
+        .ls-title { font-size: 22px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 12px; }
         .ls-title-icon { color: #F26A22; }
         .ls-subtitle { margin-top: 4px; font-size: 14px; color: #6b7280; }
         .ls-header-right { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -460,7 +457,7 @@ const LivreursSection = () => {
         .ls-badge-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
         .ls-badge-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
         .ls-actions-cell { display: flex; justify-content: flex-end; gap: 8px; }
-        .ls-icon-btn { padding: 8px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; background: transparent; }
+        .ls-icon-btn {  cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; background: transparent; }
         .ls-icon-btn-view { color: #2563eb; }
         .ls-icon-btn-view:hover { background: #eff6ff; }
         .ls-icon-btn-edit { color: #374151; }

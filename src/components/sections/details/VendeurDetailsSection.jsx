@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Mail, Phone, MapPin, Building, Calendar, 
   Star, CheckCircle, XCircle, Clock, Shield, Package, Loader2, 
-  Camera, AlertTriangle, ShieldCheck, FileText
+  Camera, AlertTriangle, ShieldCheck, FileText,
+  MessageSquare // <-- AJOUT : Icône pour la messagerie
 } from 'lucide-react';
 
 import apiClient from '../../../services/apiClient';
@@ -41,6 +42,8 @@ const VendeurDetailsSection = () => {
           const raw = response.data.data;
           setVendeur({
             id: raw.id,
+            // On récupère aussi l'ID de l'utilisateur lié si l'API le fournit
+            user_id: raw.user_id || raw.user?.id, 
             nom: raw.company_name || raw.user?.name || 'Inconnu',
             email: raw.email || raw.user?.email || 'N/A',
             telephone: raw.phone || raw.user?.phone || 'N/A',
@@ -52,7 +55,6 @@ const VendeurDetailsSection = () => {
             commandes: raw.orders_count || 0,
             note: raw.note_moyenne || 0,
             dateInscription: raw.created_at,
-            // Mapping des photos depuis le backend
             photo: raw.selfie_path || defaultAvatar,
             idFront: raw.id_front_path || null,
             idBack: raw.id_back_path || null
@@ -78,6 +80,35 @@ const VendeurDetailsSection = () => {
 
   const handleGoBack = () => {
     navigate('/dashboard/vendeurs');
+  };
+
+  // --- NOUVEAU : Fonction pour démarrer une conversation avec le vendeur ---
+  const handleStartChat = async () => {
+    try {
+      console.log("=== DONNÉES VENDEUR POUR LE CHAT ===");
+      console.log("vendeur.user_id :", vendeur.user_id);
+      
+      const recipientId = vendeur.user_id; 
+      
+      if (!recipientId) {
+        toast.error("ID utilisateur du vendeur introuvable. Vérifiez que l'API renvoie bien 'user_id' ou 'user.id'.");
+        return;
+      }
+      
+      setIsProcessing(true);
+      const response = await apiClient.post('/dashboard/messages/start', {
+        recipient_id: Number(recipientId)
+      });
+      
+      toast.success("Conversation ouverte avec succès !");
+      navigate(`/dashboard/messages?conversation=${response.data.conversation_id}`);
+      
+    } catch (error) {
+      console.error("Erreur lors du démarrage de la conversation:", error);
+      toast.error(error.response?.data?.message || "Impossible de démarrer la conversation.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleAction = async () => {
@@ -291,7 +322,7 @@ const VendeurDetailsSection = () => {
             </div>
           </div>
 
-          {/* 2. NOUVEAU : Documents d'identité (KYC) */}
+          {/* 2. Documents d'identité (KYC) */}
           <div className="vd-card">
             <div className="vd-card-header">
               <h3>Documents d'identité (KYC)</h3>
@@ -399,7 +430,6 @@ const VendeurDetailsSection = () => {
                 <span className="vd-summary-label">Zone principale</span>
                 <span className="vd-summary-value">{vendeur.zone}</span>
               </div>
-           
             </div>
           </div>
 
@@ -429,9 +459,23 @@ const VendeurDetailsSection = () => {
                 <Shield size={16} className="inline mr-2" /> 
                 {vendeur.statut === 'suspendu' ? 'Réactiver le compte' : 'Suspendre le compte'}
               </button>
+
+              {/* <-- NOUVEAU : Bouton pour contacter le vendeur via le chat --> */}
+              <button 
+                onClick={handleStartChat} 
+                className="vd-btn vd-w-full" 
+                disabled={isProcessing}
+                style={{ backgroundColor: '#f0672b', color: 'white', marginBottom: '12px' }}
+              >
+                {isProcessing ? (
+                  <><Loader2 size={16} className="animate-spin inline mr-2" /> Ouverture...</>
+                ) : (
+                  <><MessageSquare size={16} className="inline mr-2" /> Contacter ce vendeur</>
+                )}
+              </button>
               
-              <a href={`mailto:${vendeur.email}`} className="vd-btn vd-btn-warning vd-w-full" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                <Mail size={16} className="inline mr-2" /> Contacter le vendeur
+              <a href={`mailto:${vendeur.email}`} className="vd-btn vd-btn-secondary vd-w-full" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+                <Mail size={16} className="inline mr-2" /> Envoyer un email
               </a>
               
               <button onClick={handleGoBack} className="vd-btn vd-btn-secondary vd-w-full">
@@ -591,7 +635,6 @@ const VendeurDetailsSection = () => {
           border-color: #f0672b;
         }
         
-        /* --- NOUVEAU : Styles pour la grille KYC --- */
         .vd-kyc-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -641,7 +684,7 @@ const VendeurDetailsSection = () => {
         .vd-kyc-img {
           width: 100%;
           height: 100%;
-          object-fit: contain; /* Affiche l'intégralité du document sans le couper */
+          object-fit: contain;
           background: #ffffff;
         }
         .vd-kyc-placeholder {

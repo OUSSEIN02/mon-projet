@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/logo.jpg';
+import './header.css';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,50 +42,66 @@ function Header() {
   }, [location]);
 
   // Navigation links
-  const navLinks = [
-    { name: 'À propos', href: '/' },
-    { name: 'Comment ça marche ?', href: '/' },
-    { name: 'Devenir Vendeur', href: '/inscription-vendeur' },
-    { name: 'Devenir Livreur', href: '/inscription-livreur' },
-  ];
+ // Navigation links
+const navLinks = [
+  { name: 'À propos', href: '/#apropos' },
+  { name: 'Comment ça marche ?', href: '/#comment' },
+  { name: 'Devenir Vendeur', href: '/inscription-vendeur' },
+  { name: 'Devenir Livreur', href: '/inscription-livreur' },
+];
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="container nav-wrap">
+    <header className={`yd-header ${isScrolled ? 'yd-header-scrolled' : ''}`}>
+      <div className="yd-container yd-nav-wrap">
         {/* Logo */}
-        <Link to="/" className="logo" onClick={closeMenu}>
+        <Link to="/" className="yd-logo" onClick={closeMenu}>
           <img src={logo} alt="Youdégo" />
         </Link>
 
         {/* Navigation principale */}
-        <nav className={`main-nav ${isMenuOpen ? 'open' : ''}`}>
+        <nav className={`yd-main-nav ${isMenuOpen ? 'yd-main-nav-open' : ''}`}>
           {navLinks.map((link) => (
             <Link
-              key={link.name}
-              to={link.href}
-              className={location.pathname === link.href ? 'active' : ''}
-              onClick={closeMenu}
-            >
-              {link.name}
-            </Link>
+            key={link.name}
+            to={link.href}
+            className={
+              location.pathname === link.href.split('#')[0] && 
+              !link.href.includes('#') ? 'yd-nav-active' : ''
+            }
+            onClick={closeMenu}
+          >
+            {link.name}
+          </Link>
           ))}
 
-          {/* Bouton Télécharger - UNIQUEMENT sur mobile */}
+          {/* Boutons Mobile - UNIQUEMENT sur mobile */}
           {isMobile && (
-            <Link
-              to="#"
-              className="btn btn-orange mobile-download-btn"
-              onClick={closeMenu}
-            >
-              Télécharger
-            </Link>
+            <div className="yd-mobile-actions">
+              <Link
+                to="/auth"
+                className="yd-btn yd-btn-login"
+                onClick={closeMenu}
+              >
+                Connexion
+              </Link>
+              <Link
+                to="#"
+                className="yd-btn yd-btn-orange yd-mobile-download-btn"
+                onClick={closeMenu}
+              >
+                Télécharger
+              </Link>
+            </div>
           )}
         </nav>
 
         {/* CTA Desktop - UNIQUEMENT sur desktop */}
         {!isMobile && (
-          <div className="header-cta">
-            <Link to="#" className="btn btn-orange">
+          <div className="yd-header-cta">
+            <Link to="/auth" className="yd-btn yd-btn-login">
+              Connexion
+            </Link>
+            <Link to="#" className="yd-btn yd-btn-orange">
               Télécharger
             </Link>
           </div>
@@ -92,7 +109,7 @@ function Header() {
 
         {/* Menu Burger */}
         <button 
-          className="burger" 
+          className="yd-burger" 
           onClick={toggleMenu} 
           aria-label={isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
         >
